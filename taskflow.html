@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TaskFlow</title>
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+  <style>
+:root{--bg:#111827;--surface:#1f2937;--surface2:#374151;--surface3:#4b5563;--accent:#6366f1;--accent2:#8b5cf6;--text:#f9fafb;--text2:#d1d5db;--muted:#9ca3af;--border:#374151;--border2:#4b5563;--success:#10b981;--warn:#f59e0b;--danger:#ef4444;--info:#3b82f6;--r:8px;--r2:12px;--shadow:0 4px 24px rgba(0,0,0,.6)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+button{cursor:pointer;border:none;border-radius:var(--r);padding:6px 14px;font-size:13px;font-weight:500;transition:opacity .15s}
+button:hover{opacity:.82}
+input,select,textarea{background:var(--surface2);border:1px solid var(--border2);border-radius:var(--r);color:var(--text);font-size:13px;padding:6px 10px;outline:none;width:100%}
+input:focus,select:focus,textarea:focus{border-color:var(--accent)}
+select option{background:var(--surface2)}
+code{background:var(--surface2);padding:1px 5px;border-radius:4px;font-size:12px}
+#app{display:flex;flex-direction:column;height:100vh}
+#header{background:var(--surface);border-bottom:1px solid var(--border);padding:8px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+#header h1{font-size:18px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap}
+#nav{display:flex;gap:3px;margin-left:auto}
+.nav-btn{background:transparent;color:var(--muted);border:1px solid transparent;padding:5px 12px;font-size:13px}
+.nav-btn.active{background:var(--accent);color:#fff}
+#add-btn{background:var(--accent);color:#fff;padding:6px 14px;margin-left:8px;white-space:nowrap}
+#content{flex:1;overflow:hidden;position:relative}
+.view{display:none;height:100%;overflow:auto;padding:14px}
+.view.active{display:block}
+.task-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:10px 12px;cursor:pointer;transition:border-color .15s}
+.task-card:hover{border-color:var(--accent)}
+.card-title{font-weight:600;font-size:13px;margin-bottom:6px;word-break:break-word;line-height:1.4}
+.card-meta{display:flex;flex-wrap:wrap;gap:3px;align-items:center}
+.tag{display:inline-block;padding:2px 7px;border-radius:20px;font-size:11px;font-weight:500}
+.tag-cat{background:var(--surface2);color:var(--text2)}
+.tag-prog-not_started{background:#1f2937;color:var(--muted);border:1px solid var(--border2)}
+.tag-prog-in_progress{background:#1e3a5f;color:#60a5fa}
+.tag-prog-completed{background:#064e3b;color:#6ee7b7}
+.tag-prog-on_hold{background:#451a03;color:#fbbf24}
+.stars{font-size:11px;letter-spacing:-1px}
+.star-imp{color:#fbbf24}
+.star-urg{color:#f87171}
+.card-dl{font-size:11px;color:var(--muted);margin-top:4px}
+.card-dl.overdue{color:var(--danger);font-weight:600}
+.subtask-bar{height:4px;background:var(--surface2);border-radius:2px;margin-top:5px;overflow:hidden}
+.subtask-bar-fill{height:100%;background:var(--success);border-radius:2px}
+#view-a{padding:0}
+#kanban-board{display:flex;height:100%;overflow-x:auto;padding:14px;gap:10px}
+.kb-col{background:var(--surface);border-radius:var(--r2);flex:1;min-width:190px;max-width:320px;display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--border)}
+.kb-header{padding:10px 12px;font-weight:700;font-size:13px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.kb-count{background:var(--surface2);border-radius:12px;padding:1px 8px;font-size:11px;color:var(--muted)}
+.kb-body{flex:1;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:6px;min-height:80px}
+.kb-body.drag-over{background:rgba(99,102,241,.15);outline:2px dashed var(--accent);outline-offset:-4px;border-radius:var(--r)}
+.task-card.dragging{opacity:.35}
+#view-b{padding:10px}
+#matrix-outer{display:flex;flex-direction:column;height:100%;min-height:500px}
+#matrix-x-label{text-align:center;font-size:12px;color:var(--muted);padding:4px 0}
+#matrix-body{display:flex;flex:1;gap:6px;overflow:hidden}
+#matrix-y-label{display:flex;align-items:center;justify-content:center;writing-mode:vertical-rl;transform:rotate(180deg);font-size:12px;color:var(--muted);padding:0 4px;flex-shrink:0}
+#matrix-grid{display:grid;grid-template-columns:auto 1fr 1fr;grid-template-rows:auto 1fr 1fr;gap:6px;flex:1;overflow:hidden}
+.mx-col-lbl{text-align:center;font-size:11px;color:var(--muted);padding:2px}
+.mx-row-lbl{display:flex;align-items:center;font-size:11px;color:var(--muted);writing-mode:vertical-rl;transform:rotate(180deg);justify-content:center;padding:0 2px}
+.mx-q{background:var(--surface);border-radius:var(--r);padding:8px;overflow-y:auto;display:flex;flex-direction:column;gap:5px;border:1px solid var(--border)}
+.mx-q-title{font-size:11px;font-weight:700;margin-bottom:4px;padding-bottom:4px;border-bottom:1px solid var(--border);flex-shrink:0}
+#q1{border-top:3px solid var(--danger)}#q2{border-top:3px solid var(--warn)}#q3{border-top:3px solid var(--info)}#q4{border-top:3px solid var(--muted)}
+#list-controls{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
+#list-controls input{max-width:180px}
+#list-controls select{max-width:140px}
+#list-body{display:flex;flex-direction:column;gap:5px}
+.list-row{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:10px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:border-color .15s}
+.list-row:hover{border-color:var(--accent)}
+.list-row-info{flex:1;min-width:0}
+.list-row-title{font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.list-row-meta{display:flex;gap:5px;align-items:center;margin-top:4px;flex-wrap:wrap}
+#sync-view{max-width:680px;margin:0 auto}
+.sync-section{background:var(--surface);border-radius:var(--r2);padding:16px;margin-bottom:14px;border:1px solid var(--border)}
+.sync-section h3{font-size:14px;font-weight:700;margin-bottom:12px;color:var(--text2)}
+.sync-row{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.sync-row label{font-size:12px;color:var(--muted);width:130px;flex-shrink:0}
+.acc-card{background:var(--surface2);border-radius:var(--r);padding:10px 12px;margin-bottom:8px;border:1px solid var(--border2)}
+.acc-email{font-weight:600;font-size:13px}
+.acc-status{font-size:11px;margin-top:3px}
+.acc-status.ok{color:var(--success)}
+.acc-status.err{color:var(--danger)}
+.acc-cats{font-size:11px;color:var(--muted);margin-top:3px}
+.sync-log{background:var(--surface2);border-radius:var(--r);padding:10px;font-family:monospace;font-size:11px;max-height:200px;overflow-y:auto;white-space:pre-wrap;border:1px solid var(--border2)}
+.log-ok{color:var(--success)}.log-err{color:var(--danger)}.log-info{color:var(--info)}
+#modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:100;align-items:center;justify-content:center}
+#modal-bg.open{display:flex}
+#modal{background:var(--surface);border-radius:var(--r2);width:min(620px,96vw);max-height:92vh;overflow-y:auto;padding:22px;box-shadow:var(--shadow);border:1px solid var(--border2)}
+#modal h2{font-size:17px;margin-bottom:16px;font-weight:700}
+.form-row{margin-bottom:13px}
+.form-row label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}
+.stars-input{display:flex;gap:2px;align-items:center}
+.star-btn{background:none;border:none;font-size:22px;padding:1px 3px;color:var(--surface3);line-height:1}
+.star-btn.imp-active{color:#fbbf24}
+.star-btn.urg-active{color:#f87171}
+.subtask-list{display:flex;flex-direction:column;gap:4px;margin-bottom:8px}
+.subtask-item{display:flex;align-items:center;gap:6px}
+.subtask-item input[type=text]{flex:1}
+.subtask-item button{background:var(--danger);color:#fff;padding:3px 8px;font-size:11px;flex-shrink:0}
+.modal-actions{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
+.btn-primary{background:var(--accent);color:#fff}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-secondary{background:var(--surface2);color:var(--text)}
+.btn-sm{padding:4px 10px;font-size:12px}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--surface2);border:1px solid var(--border2);padding:9px 20px;border-radius:24px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .3s;z-index:200;white-space:nowrap;box-shadow:var(--shadow)}
+#toast.show{opacity:1}
+@media(max-width:640px){#kanban-board{flex-direction:column}.kb-col{max-width:100%}}
+  </style>
+</head>
+<body>
+<div id="app">
+  <div id="header">
+    <h1>TaskFlow</h1>
+    <div id="nav">
+      <button class="nav-btn active" onclick="switchView('a')">Kanban</button>
+      <button class="nav-btn" onclick="switchView('b')">Matrix</button>
+      <button class="nav-btn" onclick="switchView('c')">List</button>
+      <button class="nav-btn" onclick="switchView('d')">Google</button>
+    </div>
+    <button id="add-btn" onclick="openModal()">+ ToDo</button>
+  </div>
+  <div id="content">
+    <div id="view-a" class="view active">
+      <div id="kanban-board">
+        <div class="kb-col"><div class="kb-header">未着手 <span class="kb-count" id="cnt-not_started">0</span></div><div class="kb-body" id="kb-not_started" data-prog="not_started" ondragover="onDragOver(event)" ondrop="onDrop(event)" ondragleave="onDragLeave(event)"></div></div>
+        <div class="kb-col"><div class="kb-header">仕掛中 <span class="kb-count" id="cnt-in_progress">0</span></div><div class="kb-body" id="kb-in_progress" data-prog="in_progress" ondragover="onDragOver(event)" ondrop="onDrop(event)" ondragleave="onDragLeave(event)"></div></div>
+        <div class="kb-col"><div class="kb-header">保留 <span class="kb-count" id="cnt-on_hold">0</span></div><div class="kb-body" id="kb-on_hold" data-prog="on_hold" ondragover="onDragOver(event)" ondrop="onDrop(event)" ondragleave="onDragLeave(event)"></div></div>
+        <div class="kb-col"><div class="kb-header">完了 <span class="kb-count" id="cnt-completed">0</span></div><div class="kb-body" id="kb-completed" data-prog="completed" ondragover="onDragOver(event)" ondrop="onDrop(event)" ondragleave="onDragLeave(event)"></div></div>
+      </div>
+    </div>
+    <div id="view-b" class="view">
+      <div id="matrix-outer">
+        <div id="matrix-x-label">← 緊急度 →</div>
+        <div id="matrix-body">
+          <div id="matrix-y-label">← 重要度 →</div>
+          <div id="matrix-grid">
+            <div></div><div class="mx-col-lbl">高い（緊急）</div><div class="mx-col-lbl">低い（非緊急）</div>
+            <div class="mx-row-lbl">重要</div>
+            <div id="q1" class="mx-q"><div class="mx-q-title" style="color:var(--danger)">すぐやる</div></div>
+            <div id="q2" class="mx-q"><div class="mx-q-title" style="color:var(--warn)">計画する</div></div>
+            <div class="mx-row-lbl">低い</div>
+            <div id="q3" class="mx-q"><div class="mx-q-title" style="color:var(--info)">委任する</div></div>
+            <div id="q4" class="mx-q"><div class="mx-q-title" style="color:var(--muted)">削除検討</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="view-c" class="view">
+      <div id="list-controls">
+        <input type="text" id="list-search" placeholder="タイトル検索" oninput="renderList()">
+        <select id="list-cat" onchange="renderList()"><option value="">全カテゴリ</option></select>
+        <select id="list-prog" onchange="renderList()">
+          <option value="">全進捗</option><option value="not_started">未着手</option>
+          <option value="in_progress">仕掛中</option><option value="on_hold">保留</option><option value="completed">完了</option>
+        </select>
+        <select id="list-sort" onchange="renderList()">
+          <option value="createdAt_desc">登録日 新→旧</option><option value="createdAt_asc">登録日 旧→新</option>
+          <option value="deadline_asc">締切 近→遠</option><option value="importance_desc">重要度 高→低</option><option value="urgency_desc">緊急度 高→低</option>
+        </select>
+        <span id="list-count" style="font-size:12px;color:var(--muted)"></span>
+      </div>
+      <div id="list-body"></div>
+    </div>
+    <div id="view-d" class="view">
+      <div id="sync-view">
+        <div class="sync-section">
+          <h3>Google API 設定</h3>
+          <div class="sync-row"><label>OAuth 2.0 クライアントID</label><input type="text" id="g-client-id" placeholder="xxxx.apps.googleusercontent.com"></div>
+          <button class="btn-primary" onclick="saveGoogleSettings()">保存</button>
+          <details style="margin-top:12px">
+            <summary style="cursor:pointer;font-size:12px;color:var(--muted)">設定方法（クリックで展開）</summary>
+            <div style="margin-top:10px;font-size:12px;color:var(--text2);line-height:1.9;background:var(--surface2);padding:12px;border-radius:var(--r)">
+              <ol style="padding-left:18px;margin-top:6px">
+                <li>Google Cloud Console を個人Gmailで開く（組織なしのプロジェクト）</li>
+                <li>Google Tasks API を有効化</li>
+                <li>認証情報 → OAuthクライアントID → ウェブアプリ → <code>http://localhost:8080</code> を追加</li>
+                <li>OAuth同意画面 → 外部 → テストユーザーに自分を追加</li>
+                <li>クライアントIDを上に貼り付け → 保存</li>
+              </ol>
+              <p style="margin-top:8px;color:var(--warn)">このアプリは <code>http://localhost:8080/taskflow.html</code> で開いてください</p>
+              <p style="color:var(--muted)">サーバー起動: <code>cd ファイルのフォルダ</code> → <code>python3 -m http.server 8080</code></p>
+            </div>
+          </details>
+        </div>
+        <div class="sync-section">
+          <h3>Googleアカウント</h3>
+          <div id="acc-list"></div>
+          <button class="btn-secondary" onclick="addAccount()">+ アカウントを追加</button>
+        </div>
+        <div class="sync-section">
+          <h3>同期</h3>
+          <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center">
+            <button class="btn-primary" onclick="runSync()">双方向同期</button>
+            <button class="btn-secondary" onclick="pushOnly()">↑ TaskFlow→Google</button>
+            <button class="btn-secondary" onclick="pullOnly()">↓ Google→TaskFlow（全リスト取込）</button>
+            <span id="sync-status" style="font-size:11px;color:var(--muted)"></span>
+          </div>
+          <div id="sync-log" class="sync-log">同期ログがここに表示されます。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="modal-bg" onclick="if(event.target===this)closeModal()">
+  <div id="modal">
+    <h2 id="modal-title">ToDo 追加</h2>
+    <div class="form-row"><label>タイトル *</label><input type="text" id="f-title" placeholder="タイトルを入力"></div>
+    <div class="form-row">
+      <label>カテゴリ</label>
+      <div style="display:flex;gap:6px">
+        <select id="f-cat" style="flex:1" onchange="onCatSelectChange()"></select>
+        <input type="text" id="f-cat-new" placeholder="新規カテゴリ名" style="flex:1;display:none">
+      </div>
+    </div>
+    <div class="form-row">
+      <label>締切日</label>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+        <label style="display:flex;gap:5px;align-items:center;color:var(--text);margin-bottom:0;cursor:pointer">
+          <input type="checkbox" id="f-dl-check" onchange="toggleDL()" style="width:auto">締切あり
+        </label>
+        <input type="date" id="f-dl-date" style="display:none;flex:1;min-width:130px">
+        <input type="time" id="f-dl-time" style="display:none;width:110px">
+      </div>
+    </div>
+    <div class="form-row">
+      <label>重要度 (0-4)</label>
+      <div class="stars-input" id="imp-stars">
+        <span style="font-size:12px;color:var(--muted);width:20px" id="imp-val">0</span>
+        <button type="button" class="star-btn" data-v="1" onclick="setStar('imp',1)">★</button>
+        <button type="button" class="star-btn" data-v="2" onclick="setStar('imp',2)">★</button>
+        <button type="button" class="star-btn" data-v="3" onclick="setStar('imp',3)">★</button>
+        <button type="button" class="star-btn" data-v="4" onclick="setStar('imp',4)">★</button>
+      </div>
+    </div>
+    <div class="form-row">
+      <label>緊急度 (0-4)</label>
+      <div class="stars-input" id="urg-stars">
+        <span style="font-size:12px;color:var(--muted);width:20px" id="urg-val">0</span>
+        <button type="button" class="star-btn" data-v="1" onclick="setStar('urg',1)">!</button>
+        <button type="button" class="star-btn" data-v="2" onclick="setStar('urg',2)">!</button>
+        <button type="button" class="star-btn" data-v="3" onclick="setStar('urg',3)">!</button>
+        <button type="button" class="star-btn" data-v="4" onclick="setStar('urg',4)">!</button>
+      </div>
+    </div>
+    <div class="form-row">
+      <label>進捗</label>
+      <select id="f-prog">
+        <option value="not_started">未着手</option><option value="in_progress">仕掛中</option>
+        <option value="on_hold">保留</option><option value="completed">完了</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <label>サブタスク</label>
+      <div id="subtask-list" class="subtask-list"></div>
+      <button type="button" class="btn-secondary btn-sm" onclick="addSubtask()" style="margin-top:4px">+ サブタスク追加</button>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="saveTodo()">保存</button>
+      <button class="btn-danger" id="del-btn" onclick="deleteCurrent()" style="display:none">削除</button>
+      <button class="btn-secondary" onclick="closeModal()">キャンセル</button>
+    </div>
+  </div>
+</div>
+<div id="toast"></div>
+<script>
+const STORAGE_KEY='tf_v2',GSETTINGS_KEY='tf_gset',TASKS_BASE='https://tasks.googleapis.com/tasks/v1';
+const PROG_LABELS={not_started:'未着手',in_progress:'仕掛中',completed:'完了',on_hold:'保留'};
+const VIEWS=['a','b','c','d'];
+let S={todos:[],activeView:'a'},G={clientId:'',accounts:[]},gTokens={};
+let editingId=null,impVal=0,urgVal=0,subtasksTemp=[],dragId=null;
+
+function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(S))}
+function saveG(){localStorage.setItem(GSETTINGS_KEY,JSON.stringify(G))}
+function load(){
+  try{S=JSON.parse(localStorage.getItem(STORAGE_KEY))||{todos:[],activeView:'a'}}catch(e){S={todos:[],activeView:'a'}}
+  if(!Array.isArray(S.todos))S.todos=[];
+  try{G=JSON.parse(localStorage.getItem(GSETTINGS_KEY))||{clientId:'',accounts:[]}}catch(e){G={clientId:'',accounts:[]}}
+  if(!Array.isArray(G.accounts))G.accounts=[];
+}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+function toast(msg,dur=2500){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),dur)}
+function logSync(msg,cls='log-info'){const el=document.getElementById('sync-log');if(!el)return;el.innerHTML+=`<div class="${cls}">${new Date().toLocaleTimeString()} ${msg}</div>`;el.scrollTop=el.scrollHeight}
+function categories(){return[...new Set(S.todos.map(t=>t.category).filter(Boolean))].sort()}
+function deadlineStr(t){if(!t.deadline)return null;return t.deadlineTime?t.deadline+' '+t.deadlineTime:t.deadline}
+function isOverdue(t){if(!t.deadline||t.progress==='completed')return false;const dl=t.deadlineTime?t.deadline+'T'+t.deadlineTime:t.deadline+'T23:59';return new Date(dl)<new Date()}
+function quadrant(t){const imp=t.importance>=2,urg=t.urgency>=2;return imp&&urg?'q1':imp&&!urg?'q2':!imp&&urg?'q3':'q4'}
+function progTag(p){return`<span class="tag tag-prog-${p}">${PROG_LABELS[p]||p}</span>`}
+
+function makeCard(t,draggable=false){
+  const imp='★'.repeat(t.importance)+'☆'.repeat(4-t.importance);
+  const urg='!'.repeat(t.urgency)+'.'.repeat(4-t.urgency);
+  const dl=deadlineStr(t),over=isOverdue(t);
+  const sub=t.subtasks||[],subDone=sub.filter(s=>s.done).length;
+  const subPct=sub.length?Math.round(subDone/sub.length*100):0;
+  return`<div class="task-card${draggable?' draggable':''}" ${draggable?`draggable="true" ondragstart="onDragStart(event,'${t.id}')" ondragend="onDragEnd(event)"`:''} onclick="openModal('${t.id}')">
+    <div class="card-title">${esc(t.title)}</div>
+    <div class="card-meta">
+      ${t.category?`<span class="tag tag-cat">${esc(t.category)}</span>`:''}
+      ${progTag(t.progress)}
+      <span class="stars star-imp">${imp}</span><span class="stars star-urg">${urg}</span>
+      ${sub.length?`<span class="tag" style="background:var(--surface2);color:var(--muted)">${subDone}/${sub.length}</span>`:''}
+    </div>
+    ${dl?`<div class="card-dl${over?' overdue':''}">${esc(dl)}${over?' 期限切れ':''}</div>`:''}
+    ${sub.length&&subPct>0?`<div class="subtask-bar"><div class="subtask-bar-fill" style="width:${subPct}%"></div></div>`:''}
+  </div>`;
+}
+
+function switchView(v){
+  document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach((el,i)=>el.classList.toggle('active',VIEWS[i]===v));
+  document.getElementById('view-'+v).classList.add('active');
+  S.activeView=v;save();
+  if(v==='a')renderKanban();if(v==='b')renderMatrix();if(v==='c')renderList();if(v==='d')renderSync();
+}
+
+function renderKanban(){
+  ['not_started','in_progress','on_hold','completed'].forEach(p=>{
+    const body=document.getElementById('kb-'+p),cnt=document.getElementById('cnt-'+p);
+    const todos=S.todos.filter(t=>t.progress===p);
+    body.innerHTML=todos.map(t=>makeCard(t,true)).join('');
+    if(cnt)cnt.textContent=todos.length;
+  });
+}
+function onDragStart(e,id){dragId=id;e.currentTarget.classList.add('dragging');e.dataTransfer.effectAllowed='move'}
+function onDragEnd(e){e.currentTarget.classList.remove('dragging')}
+function onDragOver(e){e.preventDefault();e.dataTransfer.dropEffect='move';e.currentTarget.classList.add('drag-over')}
+function onDragLeave(e){e.currentTarget.classList.remove('drag-over')}
+function onDrop(e){
+  e.preventDefault();e.currentTarget.classList.remove('drag-over');
+  const prog=e.currentTarget.dataset.prog,todo=S.todos.find(t=>t.id===dragId);
+  if(todo&&todo.progress!==prog){todo.progress=prog;save();renderKanban();toast('進捗を更新しました')}
+  dragId=null;
+}
+
+function renderMatrix(){
+  const qs={q1:[],q2:[],q3:[],q4:[]};
+  S.todos.filter(t=>t.progress!=='completed').forEach(t=>qs[quadrant(t)].push(t));
+  ['q1','q2','q3','q4'].forEach(q=>{const el=document.getElementById(q);const title=el.querySelector('.mx-q-title').outerHTML;el.innerHTML=title+qs[q].map(t=>makeCard(t)).join('')});
+}
+
+function renderList(){
+  const search=(document.getElementById('list-search')?.value||'').toLowerCase();
+  const catFilter=document.getElementById('list-cat')?.value||'';
+  const progFilter=document.getElementById('list-prog')?.value||'';
+  const sort=document.getElementById('list-sort')?.value||'createdAt_desc';
+  const catSel=document.getElementById('list-cat');
+  if(catSel){const cur=catSel.value;catSel.innerHTML='<option value="">全カテゴリ</option>'+categories().map(c=>`<option value="${esc(c)}"${c===cur?' selected':''}>${esc(c)}</option>`).join('');catSel.value=cur}
+  let todos=[...S.todos];
+  if(search)todos=todos.filter(t=>t.title.toLowerCase().includes(search)||(t.category||'').toLowerCase().includes(search));
+  if(catFilter)todos=todos.filter(t=>t.category===catFilter);
+  if(progFilter)todos=todos.filter(t=>t.progress===progFilter);
+  todos.sort((a,b)=>{
+    if(sort==='createdAt_asc')return new Date(a.createdAt)-new Date(b.createdAt);
+    if(sort==='createdAt_desc')return new Date(b.createdAt)-new Date(a.createdAt);
+    if(sort==='deadline_asc'){if(!a.deadline&&!b.deadline)return 0;if(!a.deadline)return 1;if(!b.deadline)return-1;return new Date(a.deadline)-new Date(b.deadline)}
+    if(sort==='importance_desc')return b.importance-a.importance;
+    if(sort==='urgency_desc')return b.urgency-a.urgency;
+    return 0;
+  });
+  const countEl=document.getElementById('list-count');if(countEl)countEl.textContent=todos.length+'件';
+  const body=document.getElementById('list-body');if(!body)return;
+  body.innerHTML=todos.map(t=>{
+    const imp='★'.repeat(t.importance)+'☆'.repeat(4-t.importance),urg='!'.repeat(t.urgency)+'.'.repeat(4-t.urgency);
+    const dl=deadlineStr(t),over=isOverdue(t);
+    return`<div class="list-row" onclick="openModal('${t.id}')"><div class="list-row-info"><div class="list-row-title">${esc(t.title)}</div><div class="list-row-meta">${t.category?`<span class="tag tag-cat">${esc(t.category)}</span>`:''} ${progTag(t.progress)}<span class="stars star-imp">${imp}</span><span class="stars star-urg">${urg}</span>${dl?`<span class="card-dl${over?' overdue':''}">${esc(dl)}</span>`:''}</div></div></div>`;
+  }).join('');
+}
+
+function renderSync(){
+  const cidEl=document.getElementById('g-client-id');if(cidEl)cidEl.value=G.clientId||'';
+  renderAccList();
+}
+function renderAccList(){
+  const el=document.getElementById('acc-list');if(!el)return;
+  if(!G.accounts.length){el.innerHTML='<p style="font-size:12px;color:var(--muted);margin-bottom:10px">アカウントが登録されていません。</p>';return}
+  el.innerHTML=G.accounts.map((acc,i)=>{
+    const tok=gTokens[acc.email],authed=tok&&tok.expiry>Date.now();
+    return`<div class="acc-card"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px"><div style="flex:1;min-width:0"><div class="acc-email" style="word-break:break-all">${esc(acc.email)}</div><div class="acc-status ${authed?'ok':'err'}">${authed?'認証済':'未認証'}</div><div class="acc-cats">カテゴリ: ${acc.categories&&acc.categories.length?acc.categories.map(esc).join(', '):'（全て）'}</div></div><div style="display:flex;gap:5px;flex-shrink:0;flex-wrap:wrap"><button class="btn-secondary btn-sm" onclick="authAccount(${i})">認証</button><button class="btn-secondary btn-sm" onclick="editAccountCats(${i})">編集</button><button class="btn-danger btn-sm" onclick="removeAccount(${i})">削除</button></div></div></div>`;
+  }).join('');
+}
+function saveGoogleSettings(){G.clientId=(document.getElementById('g-client-id')?.value||'').trim();saveG();toast('設定を保存しました')}
+function addAccount(){const email=prompt('GoogleアカウントのメールアドレスURL:');if(!email||!email.includes('@')){if(email!==null)toast('正しいメールアドレスを入力');return}if(G.accounts.find(a=>a.email.toLowerCase()===email.toLowerCase())){toast('既に登録済みです');return}G.accounts.push({email:email.trim(),categories:[],listId:null});saveG();renderAccList()}
+function removeAccount(i){if(!confirm(G.accounts[i].email+' を削除しますか？'))return;delete gTokens[G.accounts[i].email];G.accounts.splice(i,1);saveG();renderAccList()}
+function editAccountCats(i){const acc=G.accounts[i];const cur=(acc.categories||[]).join(', ');const input=prompt(acc.email+' のカテゴリ（カンマ区切り、空欄で全て）:',cur);if(input===null)return;acc.categories=input.split(',').map(s=>s.trim()).filter(Boolean);saveG();renderAccList()}
+
+function authAccount(i){
+  const acc=G.accounts[i];
+  if(!G.clientId){toast('先にクライアントIDを設定して保存してください');return}
+  if(typeof google==='undefined'||!google.accounts?.oauth2){toast('Google認証ライブラリ読み込み中...');setTimeout(()=>authAccount(i),1500);return}
+  const client=google.accounts.oauth2.initTokenClient({client_id:G.clientId,scope:'https://www.googleapis.com/auth/tasks',hint:acc.email,callback:(resp)=>{if(resp.error){toast('認証失敗: '+resp.error);return}gTokens[acc.email]={token:resp.access_token,expiry:Date.now()+(resp.expires_in*1000)-60000};toast(acc.email+' 認証成功');renderAccList()}});
+  client.requestAccessToken({prompt:'select_account'});
+}
+
+async function gApi(email,method,path,body=null){
+  const tok=gTokens[email];
+  if(!tok||tok.expiry<=Date.now())throw new Error(email+' のトークンが無効です。再認証してください。');
+  const res=await fetch(TASKS_BASE+path,{method,headers:{Authorization:'Bearer '+tok.token,...(body?{'Content-Type':'application/json'}:{})},body:body?JSON.stringify(body):undefined});
+  if(!res.ok){let msg=res.statusText;try{const j=await res.json();msg=j.error?.message||msg}catch(e){}throw new Error('API '+res.status+': '+msg)}
+  if(res.status===204)return null;
+  return res.json();
+}
+async function ensureTaskList(email){
+  const acc=G.accounts.find(a=>a.email===email);
+  if(acc.listId){try{await gApi(email,'GET','/lists/'+acc.listId);return acc.listId}catch(e){acc.listId=null}}
+  const lists=await gApi(email,'GET','/users/@me/lists?maxResults=100');
+  const existing=(lists.items||[]).find(l=>l.title==='TaskFlow');
+  if(existing){acc.listId=existing.id;saveG();return acc.listId}
+  const created=await gApi(email,'POST','/users/@me/lists',{title:'TaskFlow'});
+  acc.listId=created.id;saveG();return acc.listId;
+}
+async function fetchAllTasks(email,listId){
+  let tasks=[],pageToken=null;
+  do{const url='/lists/'+listId+'/tasks?maxResults=100&showCompleted=true&showHidden=true'+(pageToken?'&pageToken='+pageToken:'');const res=await gApi(email,'GET',url);if(res.items)tasks=tasks.concat(res.items);pageToken=res.nextPageToken||null}while(pageToken);
+  return tasks.filter(t=>!t.deleted&&t.title);
+}
+function encodeNotes(todo){return'[TaskFlow] id='+todo.id+' cat='+encodeURIComponent(todo.category||'')+' imp='+todo.importance+' urg='+todo.urgency+' prog='+todo.progress}
+function decodeNotes(notes){if(!notes||!notes.includes('[TaskFlow]'))return null;const m={};notes.replace(/(\w+)=(\S+)/g,(_,k,v)=>{m[k]=v});if(!m.id)return null;return{id:m.id,category:decodeURIComponent(m.cat||''),importance:+(m.imp||0),urgency:+(m.urg||0),progress:m.prog||'not_started'}}
+function todoToGTask(todo){const task={title:todo.title,notes:encodeNotes(todo),status:todo.progress==='completed'?'completed':'needsAction'};if(todo.deadline)task.due=todo.deadline+'T00:00:00.000Z';return task}
+function gtaskToNewTodo(gt,email,catHint){return{id:uid(),title:gt.title||'(タイトルなし)',category:catHint||'',createdAt:gt.updated||new Date().toISOString(),deadline:gt.due?gt.due.substring(0,10):null,deadlineTime:null,importance:0,urgency:0,progress:gt.status==='completed'?'completed':'not_started',subtasks:[],gTaskIds:{[email]:gt.id}}}
+
+// ===== 全Googleリストから取込 (FIX: マイタスク等も対象) =====
+async function importFromAllLists(email,taskFlowListId,trackedGIds){
+  let imported=0;
+  try{
+    const allLists=await gApi(email,'GET','/users/@me/lists?maxResults=100');
+    for(const list of(allLists.items||[])){
+      if(list.id===taskFlowListId)continue;
+      try{
+        logSync('  ['+list.title+'] を確認中...');
+        const tasks=await fetchAllTasks(email,list.id);
+        for(const gt of tasks){
+          if(!trackedGIds.has(gt.id)){
+            const catHint=(list.title==='マイタスク'||list.title==='My Tasks')?'':list.title;
+            S.todos.push(gtaskToNewTodo(gt,email,catHint));
+            trackedGIds.add(gt.id);imported++;
+            logSync('  取込 ['+list.title+']: "'+gt.title+'"');
+          }
+        }
+      }catch(e){logSync('  "'+list.title+'"取得エラー: '+e.message,'log-err')}
+    }
+  }catch(e){logSync('  全リスト取得エラー: '+e.message,'log-err')}
+  return imported;
+}
+
+function getAuthedAccounts(){return G.accounts.filter(a=>gTokens[a.email]&&gTokens[a.email].expiry>Date.now())}
+function todosForAccount(acc){if(!acc.categories||!acc.categories.length)return S.todos;return S.todos.filter(t=>acc.categories.includes(t.category))}
+
+async function runSync(){
+  if(!G.clientId){toast('クライアントIDを設定してください');switchView('d');return}
+  const auths=getAuthedAccounts();if(!auths.length){toast('認証済アカウントがありません');switchView('d');return}
+  document.getElementById('sync-log').innerHTML='';logSync('===== 双方向同期 開始 =====');
+  let totalPushed=0,totalPulled=0,totalImported=0,totalErrors=0;
+  for(const acc of auths){
+    let pushed=0,pulled=0,imported=0;
+    try{
+      logSync('['+acc.email+'] TaskFlowリスト確認中...');
+      const listId=await ensureTaskList(acc.email);
+      logSync('['+acc.email+'] Push開始...');
+      const gTasks0=await fetchAllTasks(acc.email,listId);
+      const gByMetaId={};for(const gt of gTasks0){const m=decodeNotes(gt.notes);if(m)gByMetaId[m.id]=gt.id}
+      for(const todo of todosForAccount(acc)){
+        try{
+          const gTask=todoToGTask(todo);
+          const existingGId=(todo.gTaskIds&&todo.gTaskIds[acc.email])||gByMetaId[todo.id];
+          if(existingGId){await gApi(acc.email,'PATCH','/lists/'+listId+'/tasks/'+existingGId,gTask);if(!todo.gTaskIds)todo.gTaskIds={};todo.gTaskIds[acc.email]=existingGId}
+          else{const c=await gApi(acc.email,'POST','/lists/'+listId+'/tasks',gTask);if(!todo.gTaskIds)todo.gTaskIds={};todo.gTaskIds[acc.email]=c.id}
+          pushed++;
+        }catch(e){logSync('  PUSH失敗 "'+todo.title+'": '+e.message,'log-err');totalErrors++}
+      }
+      logSync('['+acc.email+'] Push完了: '+pushed+'件','log-ok');
+      logSync('['+acc.email+'] Pull開始...');
+      const freshTasks=await fetchAllTasks(acc.email,listId);
+      const trackedGIds=new Set();
+      S.todos.forEach(t=>{if(t.gTaskIds&&t.gTaskIds[acc.email])trackedGIds.add(t.gTaskIds[acc.email])});
+      for(const gt of freshTasks){
+        const meta=decodeNotes(gt.notes);
+        if(meta){const local=S.todos.find(t=>t.id===meta.id);if(local){if(gt.status==='completed'&&local.progress!=='completed'){local.progress='completed';pulled++}if(!local.gTaskIds)local.gTaskIds={};local.gTaskIds[acc.email]=gt.id;trackedGIds.add(gt.id)}}
+        else if(!trackedGIds.has(gt.id)){S.todos.push(gtaskToNewTodo(gt,acc.email,''));trackedGIds.add(gt.id);imported++;logSync('  取込 [TaskFlow]: "'+gt.title+'"')}
+      }
+      logSync('['+acc.email+'] 他のリストを確認中...');
+      const imp2=await importFromAllLists(acc.email,listId,trackedGIds);
+      imported+=imp2;
+      logSync('['+acc.email+'] Pull完了: '+pulled+'件更新, '+imported+'件新規取込','log-ok');
+      totalPushed+=pushed;totalPulled+=pulled;totalImported+=imported;
+    }catch(e){logSync('['+acc.email+'] エラー: '+e.message,'log-err');totalErrors++}
+  }
+  save();
+  const statusEl=document.getElementById('sync-status');if(statusEl)statusEl.textContent='最終同期: '+new Date().toLocaleString();
+  logSync('===== 完了 Push:'+totalPushed+' Pull更新:'+totalPulled+' 新規取込:'+totalImported+' エラー:'+totalErrors+'件 =====','log-ok');
+  renderAll();
+}
+
+async function pushOnly(){
+  if(!G.clientId){toast('クライアントIDを設定してください');return}
+  const auths=getAuthedAccounts();if(!auths.length){toast('認証済アカウントがありません');return}
+  document.getElementById('sync-log').innerHTML='';logSync('===== Push開始 =====');
+  let pushed=0,errors=0;
+  for(const acc of auths){
+    try{
+      const listId=await ensureTaskList(acc.email);
+      const gTasks0=await fetchAllTasks(acc.email,listId);
+      const gByMetaId={};for(const gt of gTasks0){const m=decodeNotes(gt.notes);if(m)gByMetaId[m.id]=gt.id}
+      for(const todo of todosForAccount(acc)){
+        try{
+          const gTask=todoToGTask(todo),existingGId=(todo.gTaskIds&&todo.gTaskIds[acc.email])||gByMetaId[todo.id];
+          if(existingGId){await gApi(acc.email,'PATCH','/lists/'+listId+'/tasks/'+existingGId,gTask);if(!todo.gTaskIds)todo.gTaskIds={};todo.gTaskIds[acc.email]=existingGId}
+          else{const c=await gApi(acc.email,'POST','/lists/'+listId+'/tasks',gTask);if(!todo.gTaskIds)todo.gTaskIds={};todo.gTaskIds[acc.email]=c.id}
+          pushed++;
+        }catch(e){logSync('PUSH失敗 "'+todo.title+'": '+e.message,'log-err');errors++}
+      }
+      logSync('['+acc.email+'] Push完了: '+pushed+'件','log-ok');
+    }catch(e){logSync('['+acc.email+'] エラー: '+e.message,'log-err');errors++}
+  }
+  save();logSync('===== Push終了 '+pushed+'件 エラー:'+errors+'件 =====','log-ok');
+}
+
+async function pullOnly(){
+  if(!G.clientId){toast('クライアントIDを設定してください');return}
+  const auths=getAuthedAccounts();if(!auths.length){toast('認証済アカウントがありません');return}
+  document.getElementById('sync-log').innerHTML='';logSync('===== Pull（全リスト取込）開始 =====');
+  let pulled=0,imported=0,errors=0;
+  for(const acc of auths){
+    try{
+      const listId=await ensureTaskList(acc.email);
+      const trackedGIds=new Set();
+      S.todos.forEach(t=>{if(t.gTaskIds&&t.gTaskIds[acc.email])trackedGIds.add(t.gTaskIds[acc.email])});
+      const freshTasks=await fetchAllTasks(acc.email,listId);
+      for(const gt of freshTasks){
+        const meta=decodeNotes(gt.notes);
+        if(meta){const local=S.todos.find(t=>t.id===meta.id);if(local){if(gt.status==='completed'&&local.progress!=='completed'){local.progress='completed';pulled++}if(!local.gTaskIds)local.gTaskIds={};local.gTaskIds[acc.email]=gt.id;trackedGIds.add(gt.id)}}
+        else if(!trackedGIds.has(gt.id)){S.todos.push(gtaskToNewTodo(gt,acc.email,''));trackedGIds.add(gt.id);imported++;logSync('  取込 [TaskFlow]: "'+gt.title+'"')}
+      }
+      logSync('['+acc.email+'] 他のリストを確認中...');
+      const imp2=await importFromAllLists(acc.email,listId,trackedGIds);
+      imported+=imp2;
+      logSync('['+acc.email+'] Pull完了: '+pulled+'件更新, '+imported+'件新規取込','log-ok');
+    }catch(e){logSync('['+acc.email+'] エラー: '+e.message,'log-err');errors++}
+  }
+  save();logSync('===== Pull終了 更新:'+pulled+' 取込:'+imported+' エラー:'+errors+'件 =====','log-ok');
+  renderAll();
+}
+
+function openModal(id=null){
+  editingId=id;const t=id?S.todos.find(x=>x.id===id):null;
+  document.getElementById('modal-title').textContent=t?'ToDo 編集':'ToDo 追加';
+  document.getElementById('del-btn').style.display=t?'':'none';
+  document.getElementById('f-title').value=t?t.title:'';
+  const catSel=document.getElementById('f-cat'),cats=categories();
+  catSel.innerHTML='<option value="">(カテゴリなし)</option><option value="__new__">+ 新規...</option>'+cats.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
+  const curCat=t?t.category||'':'';
+  if(curCat&&cats.includes(curCat))catSel.value=curCat;else if(curCat)catSel.value='__new__';else catSel.value='';
+  const catNewEl=document.getElementById('f-cat-new');
+  catNewEl.style.display=catSel.value==='__new__'?'':'none';
+  catNewEl.value=catSel.value==='__new__'&&!cats.includes(curCat)?curCat:'';
+  const hasDl=!!(t&&t.deadline);
+  document.getElementById('f-dl-check').checked=hasDl;
+  document.getElementById('f-dl-date').style.display=hasDl?'':'none';
+  document.getElementById('f-dl-time').style.display=hasDl?'':'none';
+  document.getElementById('f-dl-date').value=t&&t.deadline?t.deadline:'';
+  document.getElementById('f-dl-time').value=t&&t.deadlineTime?t.deadlineTime:'';
+  impVal=t?t.importance||0:0;urgVal=t?t.urgency||0:0;updateStars();
+  document.getElementById('f-prog').value=t?t.progress:'not_started';
+  subtasksTemp=t&&t.subtasks?t.subtasks.map(s=>({...s})):[];updateSubtaskDOM();
+  document.getElementById('modal-bg').classList.add('open');
+  document.getElementById('f-title').focus();
+}
+function closeModal(){document.getElementById('modal-bg').classList.remove('open');editingId=null}
+function onCatSelectChange(){document.getElementById('f-cat-new').style.display=document.getElementById('f-cat').value==='__new__'?'':'none'}
+function toggleDL(){const c=document.getElementById('f-dl-check').checked;document.getElementById('f-dl-date').style.display=c?'':'none';document.getElementById('f-dl-time').style.display=c?'':'none'}
+function setStar(type,val){if(type==='imp')impVal=impVal===val?0:val;else urgVal=urgVal===val?0:val;updateStars()}
+function updateStars(){
+  document.querySelectorAll('#imp-stars .star-btn').forEach(b=>{const on=+b.dataset.v<=impVal;b.classList.toggle('imp-active',on)});
+  document.querySelectorAll('#urg-stars .star-btn').forEach(b=>{const on=+b.dataset.v<=urgVal;b.classList.toggle('urg-active',on)});
+  const iv=document.getElementById('imp-val'),uv=document.getElementById('urg-val');
+  if(iv)iv.textContent=impVal;if(uv)uv.textContent=urgVal;
+}
+function updateSubtaskDOM(){document.getElementById('subtask-list').innerHTML=subtasksTemp.map((s,i)=>`<div class="subtask-item"><input type="checkbox" ${s.done?'checked':''} onchange="subtasksTemp[${i}].done=this.checked" style="width:auto;cursor:pointer"><input type="text" value="${esc(s.title)}" oninput="subtasksTemp[${i}].title=this.value" placeholder="サブタスク"><button class="btn-danger" onclick="removeSubtask(${i})">x</button></div>`).join('')}
+function addSubtask(){subtasksTemp.push({id:uid(),title:'',done:false});updateSubtaskDOM();const ins=document.querySelectorAll('#subtask-list input[type=text]');if(ins.length)ins[ins.length-1].focus()}
+function removeSubtask(i){subtasksTemp.splice(i,1);updateSubtaskDOM()}
+function saveTodo(){
+  const title=document.getElementById('f-title').value.trim();
+  if(!title){toast('タイトルを入力してください');document.getElementById('f-title').focus();return}
+  let cat=document.getElementById('f-cat').value;
+  if(cat==='__new__')cat=document.getElementById('f-cat-new').value.trim();
+  const hasDl=document.getElementById('f-dl-check').checked;
+  const dlDate=hasDl?document.getElementById('f-dl-date').value||null:null;
+  const dlTime=hasDl?document.getElementById('f-dl-time').value||null:null;
+  const subtasks=subtasksTemp.filter(s=>s.title.trim()).map(s=>({...s,title:s.title.trim()}));
+  if(editingId){const t=S.todos.find(x=>x.id===editingId);if(t)Object.assign(t,{title,category:cat,deadline:dlDate,deadlineTime:dlTime,importance:impVal,urgency:urgVal,progress:document.getElementById('f-prog').value,subtasks})}
+  else S.todos.push({id:uid(),title,category:cat,createdAt:new Date().toISOString(),deadline:dlDate,deadlineTime:dlTime,importance:impVal,urgency:urgVal,progress:document.getElementById('f-prog').value,subtasks,gTaskIds:null});
+  save();closeModal();renderAll();toast(editingId?'更新しました':'追加しました');
+}
+function deleteCurrent(){if(!editingId)return;const t=S.todos.find(x=>x.id===editingId);if(!confirm((t?t.title:'')+' を削除しますか？'))return;S.todos=S.todos.filter(t=>t.id!==editingId);save();closeModal();renderAll();toast('削除しました')}
+function renderAll(){const v=S.activeView||'a';if(v==='a')renderKanban();if(v==='b')renderMatrix();if(v==='c')renderList();if(v==='d')renderSync()}
+
+load();
+switchView(S.activeView||'a');
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+</script>
+</body>
+</html>
