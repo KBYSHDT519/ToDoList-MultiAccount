@@ -15,6 +15,7 @@ input,select,textarea{background:var(--surface2);border:1px solid var(--border2)
 input:focus,select:focus,textarea:focus{border-color:var(--accent)}
 select option{background:var(--surface2)}
 code{background:var(--surface2);padding:1px 5px;border-radius:4px;font-size:12px}
+textarea{resize:vertical;min-height:60px;line-height:1.5}
 
 /* ===== APP LAYOUT ===== */
 #app{display:flex;flex-direction:column;height:100vh}
@@ -40,6 +41,7 @@ code{background:var(--surface2);padding:1px 5px;border-radius:4px;font-size:12px
 .tag-prog-completed{background:#064e3b;color:#6ee7b7}
 .tag-prog-on_hold{background:#451a03;color:#fbbf24}
 .tag-gsync{background:#1a3a5c;color:#93c5fd;font-size:10px;padding:1px 5px}
+.tag-unassigned{background:#2d1b69;color:#c4b5fd;font-size:10px;padding:1px 5px}
 .stars{font-size:11px;letter-spacing:-1px}
 .star-imp{color:#fbbf24}.star-urg{color:#f87171}
 .card-dl{font-size:11px;color:var(--muted);margin-top:4px}
@@ -71,7 +73,7 @@ code{background:var(--surface2);padding:1px 5px;border-radius:4px;font-size:12px
 .mx-q-title{font-size:11px;font-weight:700;padding-bottom:5px;border-bottom:1px solid var(--border);width:100%;flex-shrink:0;margin-bottom:2px}
 #q1{border-top:3px solid var(--danger)}#q2{border-top:3px solid var(--warn)}#q3{border-top:3px solid var(--info)}#q4{border-top:3px solid var(--muted)}
 
-/* ===== STICKY NOTE (Matrix) ===== */
+/* ===== STICKY NOTE ===== */
 .mx-note{width:100px;min-height:60px;border-radius:4px;padding:7px 8px;cursor:pointer;position:relative;box-shadow:2px 2px 8px rgba(0,0,0,.35);flex-shrink:0;transition:transform .12s,box-shadow .12s}
 .mx-note:hover{transform:translateY(-2px) rotate(-1deg);box-shadow:4px 6px 14px rgba(0,0,0,.5)}
 .mx-note-q1{background:#fee2e2;color:#1f2937}.mx-note-q2{background:#fef9c3;color:#1f2937}
@@ -95,8 +97,6 @@ code{background:var(--surface2);padding:1px 5px;border-radius:4px;font-size:12px
 #list-body.col-1{grid-template-columns:1fr}
 #list-body.col-2{grid-template-columns:1fr 1fr}
 #list-body.col-auto{grid-template-columns:1fr}
-
-/* list row */
 .list-row{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden}
 .list-row-header{padding:10px 14px;display:flex;align-items:flex-start;gap:10px;cursor:pointer;transition:background .12s}
 .list-row-header:hover{background:var(--surface2)}
@@ -119,8 +119,6 @@ code{background:var(--surface2);padding:1px 5px;border-radius:4px;font-size:12px
 #sync-view{max-width:680px;margin:0 auto}
 .sync-section{background:var(--surface);border-radius:var(--r2);padding:16px;margin-bottom:14px;border:1px solid var(--border)}
 .sync-section h3{font-size:14px;font-weight:700;margin-bottom:12px;color:var(--text2)}
-.sync-row{display:flex;gap:8px;align-items:center;margin-bottom:8px}
-.sync-row label{font-size:12px;color:var(--muted);width:130px;flex-shrink:0}
 .acc-card{background:var(--surface2);border-radius:var(--r);padding:10px 12px;margin-bottom:8px;border:1px solid var(--border2)}
 .acc-email{font-weight:600;font-size:13px}
 .acc-status{font-size:11px;margin-top:3px}
@@ -142,7 +140,7 @@ code{background:var(--surface2);padding:1px 5px;border-radius:4px;font-size:12px
 /* ===== MODAL ===== */
 #modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:100;align-items:center;justify-content:center}
 #modal-bg.open{display:flex}
-#modal{background:var(--surface);border-radius:var(--r2);width:min(620px,96vw);max-height:92vh;overflow-y:auto;padding:22px;box-shadow:var(--shadow);border:1px solid var(--border2)}
+#modal{background:var(--surface);border-radius:var(--r2);width:min(640px,96vw);max-height:92vh;overflow-y:auto;padding:22px;box-shadow:var(--shadow);border:1px solid var(--border2)}
 #modal h2{font-size:17px;margin-bottom:16px;font-weight:700}
 .form-row{margin-bottom:13px}
 .form-row label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}
@@ -155,6 +153,7 @@ code{background:var(--surface2);padding:1px 5px;border-radius:4px;font-size:12px
 .subtask-item button{background:var(--danger);color:#fff;padding:3px 8px;font-size:11px;flex-shrink:0}
 .modal-actions{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
 .btn-primary{background:var(--accent);color:#fff}.btn-danger{background:var(--danger);color:#fff}.btn-secondary{background:var(--surface2);color:var(--text)}.btn-sm{padding:4px 10px;font-size:12px}
+.acc-assign-hint{font-size:11px;color:var(--muted);margin-top:4px;line-height:1.5}
 
 #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--surface2);border:1px solid var(--border2);padding:9px 20px;border-radius:24px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .3s;z-index:200;white-space:nowrap;box-shadow:var(--shadow)}
 #toast.show{opacity:1}
@@ -191,10 +190,7 @@ code{background:var(--surface2);padding:1px 5px;border-radius:4px;font-size:12px
         <div class="kb-col"><div class="kb-header">未着手 <span class="kb-count" id="cnt-not_started">0</span></div><div class="kb-body" id="kb-not_started" data-prog="not_started" ondragover="onDragOver(event)" ondrop="onDrop(event)" ondragleave="onDragLeave(event)"></div></div>
         <div class="kb-col"><div class="kb-header">仕掛中 <span class="kb-count" id="cnt-in_progress">0</span></div><div class="kb-body" id="kb-in_progress" data-prog="in_progress" ondragover="onDragOver(event)" ondrop="onDrop(event)" ondragleave="onDragLeave(event)"></div></div>
         <div class="kb-col"><div class="kb-header">保留 <span class="kb-count" id="cnt-on_hold">0</span></div><div class="kb-body" id="kb-on_hold" data-prog="on_hold" ondragover="onDragOver(event)" ondrop="onDrop(event)" ondragleave="onDragLeave(event)"></div></div>
-        <div class="kb-col">
-          <div class="kb-header">完了 <span class="kb-count" id="cnt-completed">0</span></div>
-          <div class="kb-body" id="kb-completed" data-prog="completed" ondragover="onDragOver(event)" ondrop="onDrop(event)" ondragleave="onDragLeave(event)"></div>
-        </div>
+        <div class="kb-col"><div class="kb-header">完了 <span class="kb-count" id="cnt-completed">0</span></div><div class="kb-body" id="kb-completed" data-prog="completed" ondragover="onDragOver(event)" ondrop="onDrop(event)" ondragleave="onDragLeave(event)"></div></div>
       </div>
     </div>
 
@@ -234,17 +230,16 @@ code{background:var(--surface2);padding:1px 5px;border-radius:4px;font-size:12px
       <div id="sync-view">
         <div class="sync-section">
           <h3>Google API 設定</h3>
-          <div class="sync-row"><label>OAuth 2.0 クライアントID</label><input type="text" id="g-client-id" placeholder="xxxx.apps.googleusercontent.com"></div>
+          <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+            <label style="font-size:12px;color:var(--muted);white-space:nowrap;min-width:130px">OAuth 2.0 クライアントID</label>
+            <input type="text" id="g-client-id" placeholder="xxxx.apps.googleusercontent.com">
+          </div>
           <button class="btn-primary" onclick="saveGoogleSettings()">保存</button>
-          <details style="margin-top:12px"><summary style="cursor:pointer;font-size:12px;color:var(--muted)">設定方法（クリックで展開）</summary>
-            <div style="margin-top:10px;font-size:12px;color:var(--text2);line-height:1.9;background:var(--surface2);padding:12px;border-radius:var(--r)">
-              <ol style="padding-left:18px"><li>Google Cloud Console を個人Gmailで開く（組織なしのプロジェクト）</li><li>Google Tasks API を有効化</li><li>認証情報 → OAuthクライアントID → ウェブアプリ → <code>https://kbyshdt519.github.io</code> を追加</li><li>OAuth同意画面 → 外部 → テストユーザーに自分を追加</li></ol>
-            </div>
-          </details>
         </div>
         <div class="sync-section"><h3>Googleアカウント</h3><div id="acc-list"></div><button class="btn-secondary" onclick="addAccount()">+ アカウントを追加</button></div>
         <div class="sync-section">
           <h3>同期</h3>
+          <p style="font-size:12px;color:var(--muted);margin-bottom:10px">各ToDoの「同期アカウント」設定に基づいて同期します。同期アカウント未設定のToDoは同期されません。</p>
           <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center">
             <button class="btn-primary" onclick="runSync()">双方向同期</button>
             <button class="btn-secondary" onclick="pushOnly()">↑ TaskFlow→Google</button>
@@ -271,18 +266,18 @@ code{background:var(--surface2);padding:1px 5px;border-radius:4px;font-size:12px
           </div>
         </div>
         <div class="settings-section">
-          <h3>アーカイブ（1年以上前に完了したToDo）</h3>
+          <h3>アーカイブ（1年以上前に完了）</h3>
           <div class="archive-stat" id="archive-stat">集計中...</div>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button class="btn-secondary" onclick="exportArchivedCSV()">📥 CSVでエクスポート</button>
+            <button class="btn-secondary" onclick="exportArchivedCSV()">📥 CSVエクスポート</button>
             <button class="btn-danger" onclick="deleteArchived()">🗑 アーカイブを削除</button>
           </div>
-          <p style="font-size:11px;color:var(--muted);margin-top:8px">※ アーカイブされたToDoはList以外の画面では非表示になります。削除は元に戻せません。</p>
+          <p style="font-size:11px;color:var(--muted);margin-top:8px">Listビュー以外では非表示になります。</p>
         </div>
         <div class="settings-section">
           <h3>データ管理</h3>
           <div style="display:flex;gap:8px;flex-wrap:wrap">
-            <button class="btn-secondary" onclick="exportAllCSV()">📥 全ToDoをCSVでエクスポート</button>
+            <button class="btn-secondary" onclick="exportAllCSV()">📥 全データCSVエクスポート</button>
             <button class="btn-danger" onclick="clearAll()">⚠ 全データ削除</button>
           </div>
         </div>
@@ -300,10 +295,17 @@ code{background:var(--surface2);padding:1px 5px;border-radius:4px;font-size:12px
     <h2 id="modal-title">ToDo 追加</h2>
     <div class="form-row"><label>タイトル *</label><input type="text" id="f-title" placeholder="タイトルを入力"></div>
     <div class="form-row"><label>カテゴリ</label><div style="display:flex;gap:6px"><select id="f-cat" style="flex:1" onchange="onCatSelectChange()"></select><input type="text" id="f-cat-new" placeholder="新規カテゴリ名" style="flex:1;display:none"></div></div>
+    <div class="form-row"><label>メモ</label><textarea id="f-notes" placeholder="メモ（Googleタスクのメモ欄に表示されます）"></textarea></div>
     <div class="form-row"><label>締切日</label><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><label style="display:flex;gap:5px;align-items:center;color:var(--text);margin-bottom:0;cursor:pointer"><input type="checkbox" id="f-dl-check" onchange="toggleDL()" style="width:auto">締切あり</label><input type="date" id="f-dl-date" style="display:none;flex:1;min-width:130px"><input type="time" id="f-dl-time" style="display:none;width:110px"></div></div>
     <div class="form-row"><label>重要度 (0-4)</label><div class="stars-input" id="imp-stars"><span style="font-size:12px;color:var(--muted);width:20px" id="imp-val">0</span><button type="button" class="star-btn" data-v="1" onclick="setStar('imp',1)">★</button><button type="button" class="star-btn" data-v="2" onclick="setStar('imp',2)">★</button><button type="button" class="star-btn" data-v="3" onclick="setStar('imp',3)">★</button><button type="button" class="star-btn" data-v="4" onclick="setStar('imp',4)">★</button></div></div>
     <div class="form-row"><label>緊急度 (0-4)</label><div class="stars-input" id="urg-stars"><span style="font-size:12px;color:var(--muted);width:20px" id="urg-val">0</span><button type="button" class="star-btn" data-v="1" onclick="setStar('urg',1)">!</button><button type="button" class="star-btn" data-v="2" onclick="setStar('urg',2)">!</button><button type="button" class="star-btn" data-v="3" onclick="setStar('urg',3)">!</button><button type="button" class="star-btn" data-v="4" onclick="setStar('urg',4)">!</button></div></div>
     <div class="form-row"><label>進捗</label><select id="f-prog"><option value="not_started">未着手</option><option value="in_progress">仕掛中</option><option value="on_hold">保留</option><option value="completed">完了</option></select></div>
+    <div class="form-row"><label>同期Googleアカウント</label>
+      <select id="f-account">
+        <option value="">同期しない（アプリのみ）</option>
+      </select>
+      <p class="acc-assign-hint">選択したアカウントのGoogle タスクに同期されます。<br>他のアカウントには影響しません。</p>
+    </div>
     <div class="form-row"><label>サブタスク</label><div id="subtask-list" class="subtask-list"></div><button type="button" class="btn-secondary btn-sm" onclick="addSubtask()" style="margin-top:4px">+ サブタスク追加</button></div>
     <div class="modal-actions"><button class="btn-primary" onclick="saveTodo()">保存</button><button class="btn-danger" id="del-btn" onclick="deleteCurrent()" style="display:none">削除</button><button class="btn-secondary" onclick="closeModal()">キャンセル</button></div>
   </div>
@@ -317,7 +319,6 @@ const VIEWS=['a','b','c','d','e'];
 let S={todos:[],activeView:'a'},G={clientId:'',accounts:[]},CFG={listCols:'col-auto'},gTokens={};
 let editingId=null,impVal=0,urgVal=0,subtasksTemp=[],dragId=null;
 let mxPopupTimer=null,mxActiveTodoId=null;
-// track expanded list rows
 const expandedRows=new Set();
 
 /* ---- PERSISTENCE ---- */
@@ -327,13 +328,11 @@ function saveSettings(){
   const sel=document.getElementById('s-list-cols');
   if(sel)CFG.listCols=sel.value;
   localStorage.setItem(SETTINGSKEY,JSON.stringify(CFG));
-  applyListColClass();
-  toast('設定を保存しました');
+  applyListColClass();toast('設定を保存しました');
 }
 function applyListColClass(){
   const body=document.getElementById('list-body');
-  if(!body)return;
-  body.className=CFG.listCols||'col-auto';
+  if(body)body.className=CFG.listCols||'col-auto';
 }
 function load(){
   try{S=JSON.parse(localStorage.getItem(STORAGE_KEY))||{todos:[],activeView:'a'}}catch(e){S={todos:[],activeView:'a'}}
@@ -354,26 +353,28 @@ function isOverdue(t){if(!t.deadline||t.progress==='completed')return false;cons
 function quadrant(t){const imp=t.importance>=2,urg=t.urgency>=2;return imp&&urg?'q1':imp&&!urg?'q2':!imp&&urg?'q3':'q4'}
 function progTag(p){return`<span class="tag tag-prog-${p}">${PROG_LABELS[p]||p}</span>`}
 
-/* ---- ARCHIVE LOGIC ---- */
-const ARCHIVE_MS=365*24*60*60*1000; // 1年
+/* ---- ARCHIVE ---- */
+const ARCHIVE_MS=365*24*60*60*1000;
 function isArchived(t){
   if(t.progress!=='completed')return false;
-  // completedAt があればそれを優先、なければcreatedAtで判定
   const dateStr=t.completedAt||t.createdAt;
   if(!dateStr)return false;
   return(Date.now()-new Date(dateStr).getTime())>ARCHIVE_MS;
 }
 function activeForNonList(t){return!isArchived(t)}
 
-/* ---- BADGES ---- */
+/* ---- ACCOUNT HELPERS ---- */
+function accountEmail(t){
+  // Returns the assigned email, or the first gTaskIds email if exists, or null
+  if(t.assignedAccount)return t.assignedAccount;
+  if(t.gTaskIds&&Object.keys(t.gTaskIds).length)return Object.keys(t.gTaskIds)[0];
+  return null;
+}
 function gSyncBadge(t){
-  if(!t.gTaskIds)return '';
-  const emails=Object.keys(t.gTaskIds);
-  if(!emails.length)return '';
-  return emails.map(e=>{
-    const short=e.length>18?e.substring(0,16)+'..':e;
-    return`<span class="tag tag-gsync" title="${esc(e)}">G: ${esc(short)}</span>`;
-  }).join('');
+  const em=accountEmail(t);
+  if(!em)return '<span class="tag tag-unassigned">未同期</span>';
+  const short=em.length>20?em.substring(0,18)+'..':em;
+  return`<span class="tag tag-gsync" title="${esc(em)}">G: ${esc(short)}</span>`;
 }
 
 /* ---- KANBAN CARD ---- */
@@ -383,7 +384,7 @@ function makeCard(t,draggable=false){
   const dl=deadlineStr(t),over=isOverdue(t);
   const sub=t.subtasks||[],subDone=sub.filter(s=>s.done).length;
   const subPct=sub.length?Math.round(subDone/sub.length*100):0;
-  return`<div class="task-card${draggable?' draggable':''}" ${draggable?`draggable="true" ondragstart="onDragStart(event,'${t.id}')" ondragend="onDragEnd(event)"`:''} onclick="openModal('${t.id}')">
+  return`<div class="task-card" ${draggable?`draggable="true" ondragstart="onDragStart(event,'${t.id}')" ondragend="onDragEnd(event)"`:''} onclick="openModal('${t.id}')">
     <div class="card-title">${esc(t.title)}</div>
     <div class="card-meta">
       ${t.category?`<span class="tag tag-cat">${esc(t.category)}</span>`:''}
@@ -401,8 +402,8 @@ function makeCard(t,draggable=false){
 const MX_NOTE_CLS={q1:'mx-note-q1',q2:'mx-note-q2',q3:'mx-note-q3',q4:'mx-note-q4'};
 function makeStickyNote(t,q){
   const dl=deadlineStr(t),over=isOverdue(t);
-  const gEmails=t.gTaskIds?Object.keys(t.gTaskIds):[];
-  const gShort=gEmails.map(e=>e.split('@')[0].substring(0,8)).join(', ');
+  const em=accountEmail(t);
+  const gShort=em?em.split('@')[0].substring(0,8):'';
   const isMobile=!window.matchMedia('(hover: hover)').matches;
   const clickFn=isMobile?`onMxNoteTap(event,'${t.id}',this)`:`openModal('${t.id}')`;
   const hoverAttrs=isMobile?'':`onmouseenter="showMxPopup('${t.id}',this)" onmouseleave="hideMxPopup()"`;
@@ -422,7 +423,7 @@ function buildPopupContent(t){
   const urg='!'.repeat(t.urgency)+'.'.repeat(4-t.urgency);
   const dl=deadlineStr(t),over=isOverdue(t);
   const sub=t.subtasks||[];
-  const gEmails=t.gTaskIds?Object.keys(t.gTaskIds):[];
+  const em=accountEmail(t);
   return`<div style="font-weight:700;font-size:13px;line-height:1.4;margin-bottom:8px">${esc(t.title)}</div>
     <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px">
       ${t.category?`<span class="tag tag-cat">${esc(t.category)}</span>`:''}
@@ -430,7 +431,7 @@ function buildPopupContent(t){
     </div>
     ${dl?`<div class="card-dl${over?' overdue':''}" style="margin-bottom:5px">期限: ${esc(dl)}${over?' 期限切れ':''}</div>`:''}
     ${sub.length?`<div style="font-size:11px;color:var(--text2);margin-bottom:5px">${sub.map(s=>`<div>${s.done?'☑':'☐'} ${esc(s.title)}</div>`).join('')}</div>`:''}
-    ${gEmails.length?`<div style="font-size:10px;color:var(--info);margin-bottom:8px">同期: ${gEmails.map(esc).join('<br>')}</div>`:''}
+    ${em?`<div style="font-size:10px;color:var(--info);margin-bottom:8px">同期: ${esc(em)}</div>`:'<div style="font-size:10px;color:var(--muted);margin-bottom:8px">同期アカウント未設定</div>'}
     <button class="btn-secondary btn-sm" onclick="hideMxPopupNow();openModal('${t.id}')" style="width:100%">編集する</button>`;
 }
 function showMxPopup(id,el){
@@ -466,15 +467,9 @@ function renderKanban(){
     const todos=S.todos.filter(t=>t.progress===p&&activeForNonList(t));
     body.innerHTML=todos.map(t=>makeCard(t,true)).join('');
     if(cnt)cnt.textContent=todos.length;
-    // 完了列にアーカイブ件数を表示
     if(p==='completed'){
       const arCnt=S.todos.filter(t=>isArchived(t)).length;
-      if(arCnt>0){
-        const note=document.createElement('div');
-        note.className='kb-archived-note';
-        note.textContent=`+${arCnt}件 アーカイブ（Listで表示）`;
-        body.appendChild(note);
-      }
+      if(arCnt>0){const note=document.createElement('div');note.className='kb-archived-note';note.textContent=`+${arCnt}件 アーカイブ（Listで表示）`;body.appendChild(note)}
     }
   });
 }
@@ -486,8 +481,8 @@ function onDrop(e){
   e.preventDefault();e.currentTarget.classList.remove('drag-over');
   const prog=e.currentTarget.dataset.prog,todo=S.todos.find(t=>t.id===dragId);
   if(todo&&todo.progress!==prog){
-    // 完了にした場合は completedAt を記録
     if(prog==='completed'&&todo.progress!=='completed')todo.completedAt=new Date().toISOString();
+    if(prog!=='completed')todo.completedAt=null;
     todo.progress=prog;save();renderKanban();toast('進捗を更新しました');
   }
   dragId=null;
@@ -511,10 +506,9 @@ function renderList(){
   const catFilter=document.getElementById('list-cat')?.value||'';
   const progFilter=document.getElementById('list-prog')?.value||'';
   const sort=document.getElementById('list-sort')?.value||'createdAt_desc';
-  // rebuild cat options
   const catSel=document.getElementById('list-cat');
   if(catSel){const cur=catSel.value;catSel.innerHTML='<option value="">全カテゴリ</option>'+categories().map(c=>`<option value="${esc(c)}"${c===cur?' selected':''}>${esc(c)}</option>`).join('');catSel.value=cur}
-  let todos=[...S.todos]; // LIST shows ALL including archived
+  let todos=[...S.todos];
   if(search)todos=todos.filter(t=>t.title.toLowerCase().includes(search)||(t.category||'').toLowerCase().includes(search));
   if(catFilter)todos=todos.filter(t=>t.category===catFilter);
   if(progFilter)todos=todos.filter(t=>t.progress===progFilter);
@@ -530,7 +524,6 @@ function renderList(){
   const body=document.getElementById('list-body');if(!body)return;
   body.innerHTML=todos.map(t=>buildListRow(t)).join('');
 }
-
 function buildListRow(t){
   const imp='★'.repeat(t.importance)+'☆'.repeat(4-t.importance);
   const urg='!'.repeat(t.urgency)+'.'.repeat(4-t.urgency);
@@ -539,7 +532,6 @@ function buildListRow(t){
   const archived=isArchived(t);
   const isOpen=expandedRows.has(t.id);
   const chevron=hasSub?`<span class="list-row-chevron${isOpen?' open':''}" id="chev-${t.id}">▶</span>`:'';
-  // subtask accordion body
   let subBody='';
   if(hasSub){
     const items=sub.map((s,si)=>`<div class="subtask-acc-item">
@@ -551,10 +543,10 @@ function buildListRow(t){
       <button class="list-row-edit-btn" onclick="event.stopPropagation();openModal('${t.id}')">編集する</button>
     </div>`;
   }
-  return`<div class="list-row${archived?' archived-row':''}">
+  return`<div class="list-row">
     <div class="list-row-header" onclick="onListRowClick('${t.id}',${hasSub})">
       <div class="list-row-info">
-        <div class="list-row-title">${archived?'[アーカイブ] ':esc('')}${esc(t.title)}</div>
+        <div class="list-row-title">${archived?'[アーカイブ] ':''}${esc(t.title)}</div>
         <div class="list-row-meta">
           ${t.category?`<span class="tag tag-cat">${esc(t.category)}</span>`:''}
           ${progTag(t.progress)}
@@ -569,55 +561,43 @@ function buildListRow(t){
     ${subBody}
   </div>`;
 }
-
 function onListRowClick(id,hasSub){
   if(hasSub){
-    // toggle accordion
     if(expandedRows.has(id)){expandedRows.delete(id)}else{expandedRows.add(id)}
-    // update DOM without full re-render for performance
     const chev=document.getElementById('chev-'+id);
     const body=document.getElementById('subbody-'+id);
     const isOpen=expandedRows.has(id);
     if(chev)chev.classList.toggle('open',isOpen);
     if(body)body.classList.toggle('open',isOpen);
-  } else {
-    openModal(id);
-  }
+  }else{openModal(id)}
 }
-
 function toggleSubtaskDone(todoId,subIdx,cb){
   const t=S.todos.find(x=>x.id===todoId);
   if(!t||!t.subtasks[subIdx])return;
-  t.subtasks[subIdx].done=cb.checked;
-  save();
-  // update title strike-through in place
+  t.subtasks[subIdx].done=cb.checked;save();
   const spans=document.querySelectorAll(`#subbody-${todoId} .subtask-acc-title`);
   if(spans[subIdx])spans[subIdx].className='subtask-acc-title'+(cb.checked?' done':'');
 }
 
-/* ---- SETTINGS RENDER ---- */
+/* ---- SETTINGS ---- */
 function renderSettings(){
-  const sel=document.getElementById('s-list-cols');
-  if(sel)sel.value=CFG.listCols||'col-auto';
+  const sel=document.getElementById('s-list-cols');if(sel)sel.value=CFG.listCols||'col-auto';
   updateArchiveStat();
 }
 function updateArchiveStat(){
   const el=document.getElementById('archive-stat');if(!el)return;
   const cnt=S.todos.filter(t=>isArchived(t)).length;
-  el.innerHTML=`アーカイブ対象（完了から1年以上）: <span>${cnt}件</span>`;
+  el.innerHTML=`アーカイブ対象: <span>${cnt}件</span>`;
 }
 
 /* ---- CSV EXPORT ---- */
 function todoCsvRow(t){
   const sub=(t.subtasks||[]).map(s=>(s.done?'[✓]':'[ ]')+s.title).join('|');
-  const gAccts=t.gTaskIds?Object.keys(t.gTaskIds).join('|'):'';
-  return [
-    t.id,t.title,t.category||'',t.progress,t.importance,t.urgency,
-    t.deadline||'',t.deadlineTime||'',t.createdAt||'',t.completedAt||'',
-    sub,gAccts
-  ].map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',');
+  const em=accountEmail(t)||'';
+  return[t.id,t.title,t.category||'',t.progress,t.importance,t.urgency,t.deadline||'',t.deadlineTime||'',t.createdAt||'',t.completedAt||'',sub,em,t.notes||'']
+    .map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',');
 }
-const CSV_HEADER='"id","title","category","progress","importance","urgency","deadline","deadlineTime","createdAt","completedAt","subtasks","gAccounts"';
+const CSV_HEADER='"id","title","category","progress","importance","urgency","deadline","deadlineTime","createdAt","completedAt","subtasks","syncAccount","notes"';
 function downloadCSV(rows,filename){
   const blob=new Blob(['﻿'+CSV_HEADER+'\n'+rows.join('\n')],{type:'text/csv;charset=utf-8'});
   const url=URL.createObjectURL(blob),a=document.createElement('a');
@@ -627,25 +607,22 @@ function exportArchivedCSV(){
   const rows=S.todos.filter(t=>isArchived(t)).map(todoCsvRow);
   if(!rows.length){toast('アーカイブ対象がありません');return}
   const d=new Date().toISOString().slice(0,10).replace(/-/g,'');
-  downloadCSV(rows,`taskflow_archive_${d}.csv`);
-  toast(`${rows.length}件をCSVに出力しました`);
+  downloadCSV(rows,`taskflow_archive_${d}.csv`);toast(`${rows.length}件を出力しました`);
 }
 function exportAllCSV(){
   const rows=S.todos.map(todoCsvRow);
   if(!rows.length){toast('ToDoがありません');return}
   const d=new Date().toISOString().slice(0,10).replace(/-/g,'');
-  downloadCSV(rows,`taskflow_all_${d}.csv`);
-  toast(`${rows.length}件をCSVに出力しました`);
+  downloadCSV(rows,`taskflow_all_${d}.csv`);toast(`${rows.length}件を出力しました`);
 }
 function deleteArchived(){
   const cnt=S.todos.filter(t=>isArchived(t)).length;
   if(!cnt){toast('アーカイブ対象がありません');return}
-  if(!confirm(`アーカイブされた${cnt}件を完全に削除しますか？この操作は元に戻せません。`))return;
-  S.todos=S.todos.filter(t=>!isArchived(t));
-  save();updateArchiveStat();toast(`${cnt}件を削除しました`);
+  if(!confirm(`アーカイブされた${cnt}件を完全に削除しますか？`))return;
+  S.todos=S.todos.filter(t=>!isArchived(t));save();updateArchiveStat();toast(`${cnt}件を削除しました`);
 }
 function clearAll(){
-  if(!confirm('全てのToDoを削除しますか？この操作は元に戻せません。'))return;
+  if(!confirm('全てのToDoを削除しますか？'))return;
   S.todos=[];save();renderAll();toast('全データを削除しました');
 }
 
@@ -656,13 +633,38 @@ function renderAccList(){
   if(!G.accounts.length){el.innerHTML='<p style="font-size:12px;color:var(--muted);margin-bottom:10px">アカウントが登録されていません。</p>';return}
   el.innerHTML=G.accounts.map((acc,i)=>{
     const tok=gTokens[acc.email],authed=tok&&tok.expiry>Date.now();
-    return`<div class="acc-card"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px"><div style="flex:1;min-width:0"><div class="acc-email" style="word-break:break-all">${esc(acc.email)}</div><div class="acc-status ${authed?'ok':'err'}">${authed?'認証済':'未認証'}</div><div class="acc-cats">カテゴリ: ${acc.categories&&acc.categories.length?acc.categories.map(esc).join(', '):'（全て）'}</div></div><div style="display:flex;gap:5px;flex-shrink:0;flex-wrap:wrap"><button class="btn-secondary btn-sm" onclick="authAccount(${i})">認証</button><button class="btn-secondary btn-sm" onclick="editAccountCats(${i})">編集</button><button class="btn-danger btn-sm" onclick="removeAccount(${i})">削除</button></div></div></div>`;
+    const assignedCount=S.todos.filter(t=>(t.assignedAccount===acc.email)||(t.gTaskIds&&t.gTaskIds[acc.email]&&!t.assignedAccount)).length;
+    return`<div class="acc-card"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
+      <div style="flex:1;min-width:0">
+        <div class="acc-email" style="word-break:break-all">${esc(acc.email)}</div>
+        <div class="acc-status ${authed?'ok':'err'}">${authed?'認証済':'未認証'}</div>
+        <div class="acc-cats" style="margin-top:4px">同期対象: ${assignedCount}件のToDo</div>
+      </div>
+      <div style="display:flex;gap:5px;flex-shrink:0;flex-wrap:wrap">
+        <button class="btn-secondary btn-sm" onclick="authAccount(${i})">認証</button>
+        <button class="btn-danger btn-sm" onclick="removeAccount(${i})">削除</button>
+      </div>
+    </div></div>`;
   }).join('');
 }
 function saveGoogleSettings(){G.clientId=(document.getElementById('g-client-id')?.value||'').trim();saveG();toast('設定を保存しました')}
-function addAccount(){const email=prompt('GoogleアカウントのメールアドレスURL:');if(!email||!email.includes('@')){if(email!==null)toast('正しいメールアドレスを入力');return}if(G.accounts.find(a=>a.email.toLowerCase()===email.toLowerCase())){toast('既に登録済みです');return}G.accounts.push({email:email.trim(),categories:[],listId:null});saveG();renderAccList()}
-function removeAccount(i){if(!confirm(G.accounts[i].email+' を削除しますか？'))return;delete gTokens[G.accounts[i].email];G.accounts.splice(i,1);saveG();renderAccList()}
-function editAccountCats(i){const acc=G.accounts[i];const cur=(acc.categories||[]).join(', ');const input=prompt(acc.email+' のカテゴリ（カンマ区切り、空欄で全て）:',cur);if(input===null)return;acc.categories=input.split(',').map(s=>s.trim()).filter(Boolean);saveG();renderAccList()}
+function addAccount(){
+  const email=prompt('GoogleアカウントのメールアドレスURL:');
+  if(!email||!email.includes('@')){if(email!==null)toast('正しいメールアドレスを入力');return}
+  if(G.accounts.find(a=>a.email.toLowerCase()===email.toLowerCase())){toast('既に登録済みです');return}
+  G.accounts.push({email:email.trim(),listId:null});saveG();renderAccList();
+}
+function removeAccount(i){
+  if(!confirm(G.accounts[i].email+' を削除しますか？\n※このアカウントに同期しているToDoの同期設定が解除されます。'))return;
+  const em=G.accounts[i].email;
+  delete gTokens[em];
+  // assignedAccountを持つToDoの設定をクリア
+  S.todos.forEach(t=>{
+    if(t.assignedAccount===em){t.assignedAccount=null}
+    if(t.gTaskIds&&t.gTaskIds[em])delete t.gTaskIds[em];
+  });
+  save();G.accounts.splice(i,1);saveG();renderAccList();
+}
 
 /* ---- GOOGLE OAUTH ---- */
 function authAccount(i){
@@ -696,10 +698,63 @@ async function fetchAllTasks(email,listId){
   do{const url='/lists/'+listId+'/tasks?maxResults=100&showCompleted=true&showHidden=true'+(pageToken?'&pageToken='+pageToken:'');const res=await gApi(email,'GET',url);if(res.items)tasks=tasks.concat(res.items);pageToken=res.nextPageToken||null}while(pageToken);
   return tasks.filter(t=>!t.deleted&&t.title);
 }
-function encodeNotes(todo){return'[TaskFlow] id='+todo.id+' cat='+encodeURIComponent(todo.category||'')+' imp='+todo.importance+' urg='+todo.urgency+' prog='+todo.progress}
-function decodeNotes(notes){if(!notes||!notes.includes('[TaskFlow]'))return null;const m={};notes.replace(/(\w+)=(\S+)/g,(_,k,v)=>{m[k]=v});if(!m.id)return null;return{id:m.id,category:decodeURIComponent(m.cat||''),importance:+(m.imp||0),urgency:+(m.urg||0),progress:m.prog||'not_started'}}
-function todoToGTask(todo){const task={title:todo.title,notes:encodeNotes(todo),status:todo.progress==='completed'?'completed':'needsAction'};if(todo.deadline)task.due=todo.deadline+'T00:00:00.000Z';return task}
-function gtaskToNewTodo(gt,email,catHint){return{id:uid(),title:gt.title||'(タイトルなし)',category:catHint||'',createdAt:gt.updated||new Date().toISOString(),deadline:gt.due?gt.due.substring(0,10):null,deadlineTime:null,importance:0,urgency:0,progress:gt.status==='completed'?'completed':'not_started',completedAt:gt.status==='completed'?(gt.completed||gt.updated||null):null,subtasks:[],gTaskIds:{[email]:gt.id}}}
+
+/* ---- Google Task変換 ----
+   notesにはユーザーのメモのみを保存。メタデータは一切入れない。
+   同期の対応はgTaskIds（taskflowのID ↔ GoogleTask ID）で管理する。
+*/
+function todoToGTask(todo){
+  const task={
+    title:todo.title,
+    notes:todo.notes||'',          // ユーザーメモのみ。メタデータなし。
+    status:todo.progress==='completed'?'completed':'needsAction'
+  };
+  if(todo.deadline)task.due=todo.deadline+'T00:00:00.000Z';
+  return task;
+}
+
+/* 既存のメタデータ形式（旧バージョンからの移行用）を読み取る */
+function decodeNotes(notes){
+  if(!notes||!notes.includes('[TaskFlow]'))return null;
+  const m={};
+  notes.replace(/(\w+)=(\S+)/g,(_,k,v)=>{m[k]=v});
+  if(!m.id)return null;
+  return{id:m.id,category:decodeURIComponent(m.cat||''),importance:+(m.imp||0),urgency:+(m.urg||0),progress:m.prog||'not_started'};
+}
+
+function gtaskToNewTodo(gt,email,catHint){
+  // notesに[TaskFlow]メタデータが含まれていた場合は、メモとして扱わない（旧データ移行）
+  const hasMetadata=gt.notes&&gt.notes.includes('[TaskFlow]');
+  return{
+    id:uid(),
+    title:gt.title||'(タイトルなし)',
+    category:catHint||'',
+    notes:hasMetadata?'':(gt.notes||''),  // 旧メタデータはメモに入れない
+    createdAt:gt.updated||new Date().toISOString(),
+    deadline:gt.due?gt.due.substring(0,10):null,
+    deadlineTime:null,
+    importance:0,urgency:0,
+    progress:gt.status==='completed'?'completed':'not_started',
+    completedAt:gt.status==='completed'?(gt.completed||gt.updated||null):null,
+    subtasks:[],
+    assignedAccount:email,
+    gTaskIds:{[email]:gt.id}
+  };
+}
+
+/* ---- SYNC対象の決定
+   - assignedAccount が設定されているToDo → そのアカウントでのみ同期
+   - assignedAccount が null で gTaskIds[email] がある → そのアカウントで同期（旧データ互換）
+   - それ以外 → 同期しない
+---- */
+function todosForAccount(acc){
+  return S.todos.filter(t=>{
+    if(t.assignedAccount)return t.assignedAccount===acc.email;
+    // 旧データ互換：assignedAccountがなくgTaskIdsにこのアカウントのIDがある場合
+    if(t.gTaskIds&&t.gTaskIds[acc.email])return true;
+    return false;
+  });
+}
 
 async function importFromAllLists(email,taskFlowListId,trackedGIds){
   let imported=0;
@@ -723,8 +778,8 @@ async function importFromAllLists(email,taskFlowListId,trackedGIds){
   }catch(e){logSync('  全リスト取得エラー: '+e.message,'log-err')}
   return imported;
 }
+
 function getAuthedAccounts(){return G.accounts.filter(a=>gTokens[a.email]&&gTokens[a.email].expiry>Date.now())}
-function todosForAccount(acc){if(!acc.categories||!acc.categories.length)return S.todos;return S.todos.filter(t=>acc.categories.includes(t.category))}
 
 async function runSync(){
   if(!G.clientId){toast('クライアントIDを設定してください');switchView('d');return}
@@ -736,35 +791,64 @@ async function runSync(){
     try{
       logSync('['+acc.email+'] TaskFlowリスト確認中...');
       const listId=await ensureTaskList(acc.email);
-      const gTasks0=await fetchAllTasks(acc.email,listId);
-      const gByMetaId={};for(const gt of gTasks0){const m=decodeNotes(gt.notes);if(m)gByMetaId[m.id]=gt.id}
-      for(const todo of todosForAccount(acc)){
+      const myTodos=todosForAccount(acc);
+      logSync('['+acc.email+'] 同期対象: '+myTodos.length+'件');
+
+      // Push: このアカウントに割り当てられたToDoのみ
+      for(const todo of myTodos){
         try{
-          const gTask=todoToGTask(todo),existingGId=(todo.gTaskIds&&todo.gTaskIds[acc.email])||gByMetaId[todo.id];
-          if(existingGId){await gApi(acc.email,'PATCH','/lists/'+listId+'/tasks/'+existingGId,gTask);if(!todo.gTaskIds)todo.gTaskIds={};todo.gTaskIds[acc.email]=existingGId}
-          else{const c=await gApi(acc.email,'POST','/lists/'+listId+'/tasks',gTask);if(!todo.gTaskIds)todo.gTaskIds={};todo.gTaskIds[acc.email]=c.id}
+          const gTask=todoToGTask(todo);
+          const existingGId=todo.gTaskIds&&todo.gTaskIds[acc.email];
+          if(existingGId){
+            await gApi(acc.email,'PATCH','/lists/'+listId+'/tasks/'+existingGId,gTask);
+          }else{
+            const c=await gApi(acc.email,'POST','/lists/'+listId+'/tasks',gTask);
+            if(!todo.gTaskIds)todo.gTaskIds={};
+            todo.gTaskIds[acc.email]=c.id;
+          }
           pushed++;
         }catch(e){logSync('  PUSH失敗 "'+todo.title+'": '+e.message,'log-err');totalErrors++}
       }
       logSync('['+acc.email+'] Push完了: '+pushed+'件','log-ok');
+
+      // Pull: TaskFlowリストの最新を取得
       const freshTasks=await fetchAllTasks(acc.email,listId);
-      const trackedGIds=new Set();
-      S.todos.forEach(t=>{if(t.gTaskIds&&t.gTaskIds[acc.email])trackedGIds.add(t.gTaskIds[acc.email])});
+      const knownGIds=new Map(); // gTaskId → local todo
+      S.todos.forEach(t=>{if(t.gTaskIds&&t.gTaskIds[acc.email])knownGIds.set(t.gTaskIds[acc.email],t)});
+
       for(const gt of freshTasks){
-        const meta=decodeNotes(gt.notes);
-        if(meta){const local=S.todos.find(t=>t.id===meta.id);if(local){if(gt.status==='completed'&&local.progress!=='completed'){local.progress='completed';if(!local.completedAt)local.completedAt=gt.completed||new Date().toISOString();pulled++}if(!local.gTaskIds)local.gTaskIds={};local.gTaskIds[acc.email]=gt.id;trackedGIds.add(gt.id)}}
-        else if(!trackedGIds.has(gt.id)){S.todos.push(gtaskToNewTodo(gt,acc.email,''));trackedGIds.add(gt.id);imported++;logSync('  取込 [TaskFlow]: "'+gt.title+'"')}
+        const local=knownGIds.get(gt.id);
+        if(local){
+          // 既知のToDo：完了状態を同期
+          if(gt.status==='completed'&&local.progress!=='completed'){local.progress='completed';if(!local.completedAt)local.completedAt=gt.completed||new Date().toISOString();pulled++}
+        }else{
+          // 未知のGoogleタスク（Googleアプリ側で直接追加されたもの）
+          const meta=decodeNotes(gt.notes); // 旧メタデータ確認
+          if(meta){
+            // 旧バージョンのメタデータあり：ローカルIDで検索
+            const byId=S.todos.find(t=>t.id===meta.id);
+            if(byId){if(!byId.gTaskIds)byId.gTaskIds={};byId.gTaskIds[acc.email]=gt.id;if(!byId.assignedAccount)byId.assignedAccount=acc.email;pulled++}
+            else{S.todos.push(gtaskToNewTodo(gt,acc.email,''));imported++;logSync('  取込 [TaskFlow]: "'+gt.title+'"')}
+          }else{
+            S.todos.push(gtaskToNewTodo(gt,acc.email,''));imported++;logSync('  取込 [TaskFlow]: "'+gt.title+'"');
+          }
+        }
       }
+      logSync('['+acc.email+'] Pull完了: '+pulled+'件更新, '+imported+'件新規取込','log-ok');
+
+      // 他リストからの取込
+      const trackedGIds=new Set(knownGIds.keys());
+      freshTasks.forEach(gt=>trackedGIds.add(gt.id));
       logSync('['+acc.email+'] 他のリストを確認中...');
       const imp2=await importFromAllLists(acc.email,listId,trackedGIds);
       imported+=imp2;
-      logSync('['+acc.email+'] Pull完了: '+pulled+'件更新, '+imported+'件新規取込','log-ok');
+
       totalPushed+=pushed;totalPulled+=pulled;totalImported+=imported;
     }catch(e){logSync('['+acc.email+'] エラー: '+e.message,'log-err');totalErrors++}
   }
   save();
   const statusEl=document.getElementById('sync-status');if(statusEl)statusEl.textContent='最終同期: '+new Date().toLocaleString();
-  logSync('===== 完了 Push:'+totalPushed+' Pull更新:'+totalPulled+' 新規取込:'+totalImported+' エラー:'+totalErrors+'件 =====','log-ok');
+  logSync('===== 完了 Push:'+totalPushed+' Pull更新:'+totalPulled+' 新規取込:'+totalImported+' エラー:'+totalErrors+' =====','log-ok');
   renderAll();
 }
 
@@ -772,24 +856,24 @@ async function pushOnly(){
   if(!G.clientId){toast('クライアントIDを設定してください');return}
   const auths=getAuthedAccounts();if(!auths.length){toast('認証済アカウントがありません');return}
   document.getElementById('sync-log').innerHTML='';logSync('===== Push開始 =====');
-  let pushed=0,errors=0;
+  let total=0,errors=0;
   for(const acc of auths){
     try{
       const listId=await ensureTaskList(acc.email);
-      const gTasks0=await fetchAllTasks(acc.email,listId);
-      const gByMetaId={};for(const gt of gTasks0){const m=decodeNotes(gt.notes);if(m)gByMetaId[m.id]=gt.id}
-      for(const todo of todosForAccount(acc)){
+      const myTodos=todosForAccount(acc);
+      logSync('['+acc.email+'] Push対象: '+myTodos.length+'件');
+      for(const todo of myTodos){
         try{
-          const gTask=todoToGTask(todo),existingGId=(todo.gTaskIds&&todo.gTaskIds[acc.email])||gByMetaId[todo.id];
-          if(existingGId){await gApi(acc.email,'PATCH','/lists/'+listId+'/tasks/'+existingGId,gTask);if(!todo.gTaskIds)todo.gTaskIds={};todo.gTaskIds[acc.email]=existingGId}
+          const gTask=todoToGTask(todo),existingGId=todo.gTaskIds&&todo.gTaskIds[acc.email];
+          if(existingGId){await gApi(acc.email,'PATCH','/lists/'+listId+'/tasks/'+existingGId,gTask)}
           else{const c=await gApi(acc.email,'POST','/lists/'+listId+'/tasks',gTask);if(!todo.gTaskIds)todo.gTaskIds={};todo.gTaskIds[acc.email]=c.id}
-          pushed++;
+          total++;
         }catch(e){logSync('PUSH失敗 "'+todo.title+'": '+e.message,'log-err');errors++}
       }
-      logSync('['+acc.email+'] Push完了: '+pushed+'件','log-ok');
+      logSync('['+acc.email+'] 完了: '+total+'件','log-ok');
     }catch(e){logSync('['+acc.email+'] エラー: '+e.message,'log-err');errors++}
   }
-  save();logSync('===== Push終了 '+pushed+'件 エラー:'+errors+'件 =====','log-ok');
+  save();logSync('===== Push終了 '+total+'件 エラー:'+errors+' =====','log-ok');
 }
 
 async function pullOnly(){
@@ -800,29 +884,39 @@ async function pullOnly(){
   for(const acc of auths){
     try{
       const listId=await ensureTaskList(acc.email);
-      const trackedGIds=new Set();
-      S.todos.forEach(t=>{if(t.gTaskIds&&t.gTaskIds[acc.email])trackedGIds.add(t.gTaskIds[acc.email])});
+      const knownGIds=new Map();
+      S.todos.forEach(t=>{if(t.gTaskIds&&t.gTaskIds[acc.email])knownGIds.set(t.gTaskIds[acc.email],t)});
       const freshTasks=await fetchAllTasks(acc.email,listId);
       for(const gt of freshTasks){
-        const meta=decodeNotes(gt.notes);
-        if(meta){const local=S.todos.find(t=>t.id===meta.id);if(local){if(gt.status==='completed'&&local.progress!=='completed'){local.progress='completed';if(!local.completedAt)local.completedAt=gt.completed||new Date().toISOString();pulled++}if(!local.gTaskIds)local.gTaskIds={};local.gTaskIds[acc.email]=gt.id;trackedGIds.add(gt.id)}}
-        else if(!trackedGIds.has(gt.id)){S.todos.push(gtaskToNewTodo(gt,acc.email,''));trackedGIds.add(gt.id);imported++;logSync('  取込 [TaskFlow]: "'+gt.title+'"')}
+        const local=knownGIds.get(gt.id);
+        if(local){if(gt.status==='completed'&&local.progress!=='completed'){local.progress='completed';if(!local.completedAt)local.completedAt=gt.completed||new Date().toISOString();pulled++}}
+        else{
+          const meta=decodeNotes(gt.notes);
+          if(meta){const byId=S.todos.find(t=>t.id===meta.id);if(byId){if(!byId.gTaskIds)byId.gTaskIds={};byId.gTaskIds[acc.email]=gt.id;if(!byId.assignedAccount)byId.assignedAccount=acc.email;pulled++}else{S.todos.push(gtaskToNewTodo(gt,acc.email,''));imported++;logSync('  取込: "'+gt.title+'"')}}
+          else{S.todos.push(gtaskToNewTodo(gt,acc.email,''));imported++;logSync('  取込: "'+gt.title+'"')}
+        }
       }
-      const imp2=await importFromAllLists(acc.email,listId,trackedGIds);
-      imported+=imp2;
+      const trackedGIds=new Set([...knownGIds.keys(),...freshTasks.map(t=>t.id)]);
+      const imp2=await importFromAllLists(acc.email,listId,trackedGIds);imported+=imp2;
       logSync('['+acc.email+'] Pull完了: '+pulled+'件更新, '+imported+'件新規取込','log-ok');
     }catch(e){logSync('['+acc.email+'] エラー: '+e.message,'log-err');errors++}
   }
-  save();logSync('===== Pull終了 更新:'+pulled+' 取込:'+imported+' エラー:'+errors+'件 =====','log-ok');
+  save();logSync('===== Pull終了 更新:'+pulled+' 取込:'+imported+' エラー:'+errors+' =====','log-ok');
   renderAll();
 }
 
 /* ---- MODAL ---- */
+function refreshAccountSelector(currentEmail){
+  const sel=document.getElementById('f-account');if(!sel)return;
+  sel.innerHTML='<option value="">同期しない（アプリのみ）</option>'+
+    G.accounts.map(a=>`<option value="${esc(a.email)}"${a.email===currentEmail?' selected':''}>${esc(a.email)}</option>`).join('');
+}
 function openModal(id=null){
   editingId=id;const t=id?S.todos.find(x=>x.id===id):null;
   document.getElementById('modal-title').textContent=t?'ToDo 編集':'ToDo 追加';
   document.getElementById('del-btn').style.display=t?'':'none';
   document.getElementById('f-title').value=t?t.title:'';
+  document.getElementById('f-notes').value=t?t.notes||'':'';
   const catSel=document.getElementById('f-cat'),cats=categories();
   catSel.innerHTML='<option value="">(カテゴリなし)</option><option value="__new__">+ 新規...</option>'+cats.map(c=>`<option value="${esc(c)}">${esc(c)}</option>`).join('');
   const curCat=t?t.category||'':'';
@@ -838,6 +932,9 @@ function openModal(id=null){
   document.getElementById('f-dl-time').value=t&&t.deadlineTime?t.deadlineTime:'';
   impVal=t?t.importance||0:0;urgVal=t?t.urgency||0:0;updateStars();
   document.getElementById('f-prog').value=t?t.progress:'not_started';
+  // 同期アカウント
+  const currentAcc=t?accountEmail(t)||'':'';
+  refreshAccountSelector(currentAcc);
   subtasksTemp=t&&t.subtasks?t.subtasks.map(s=>({...s})):[];updateSubtaskDOM();
   document.getElementById('modal-bg').classList.add('open');
   document.getElementById('f-title').focus();
@@ -847,8 +944,8 @@ function onCatSelectChange(){document.getElementById('f-cat-new').style.display=
 function toggleDL(){const c=document.getElementById('f-dl-check').checked;document.getElementById('f-dl-date').style.display=c?'':'none';document.getElementById('f-dl-time').style.display=c?'':'none'}
 function setStar(type,val){if(type==='imp')impVal=impVal===val?0:val;else urgVal=urgVal===val?0:val;updateStars()}
 function updateStars(){
-  document.querySelectorAll('#imp-stars .star-btn').forEach(b=>{const on=+b.dataset.v<=impVal;b.classList.toggle('imp-active',on)});
-  document.querySelectorAll('#urg-stars .star-btn').forEach(b=>{const on=+b.dataset.v<=urgVal;b.classList.toggle('urg-active',on)});
+  document.querySelectorAll('#imp-stars .star-btn').forEach(b=>{b.classList.toggle('imp-active',+b.dataset.v<=impVal)});
+  document.querySelectorAll('#urg-stars .star-btn').forEach(b=>{b.classList.toggle('urg-active',+b.dataset.v<=urgVal)});
   const iv=document.getElementById('imp-val'),uv=document.getElementById('urg-val');
   if(iv)iv.textContent=impVal;if(uv)uv.textContent=urgVal;
 }
@@ -861,34 +958,34 @@ function saveTodo(){
   if(!title){toast('タイトルを入力してください');document.getElementById('f-title').focus();return}
   let cat=document.getElementById('f-cat').value;
   if(cat==='__new__')cat=document.getElementById('f-cat-new').value.trim();
+  const notes=document.getElementById('f-notes').value.trim();
   const hasDl=document.getElementById('f-dl-check').checked;
   const dlDate=hasDl?document.getElementById('f-dl-date').value||null:null;
   const dlTime=hasDl?document.getElementById('f-dl-time').value||null:null;
   const prog=document.getElementById('f-prog').value;
+  const newAccount=document.getElementById('f-account').value||null;
   const subtasks=subtasksTemp.filter(s=>s.title.trim()).map(s=>({...s,title:s.title.trim()}));
   if(editingId){
     const t=S.todos.find(x=>x.id===editingId);
     if(t){
-      // completedAt の更新
+      // アカウント変更時：旧アカウントのgTaskIdは保持（Googleタスクの孤立を防ぐため）
       if(prog==='completed'&&t.progress!=='completed')t.completedAt=new Date().toISOString();
       if(prog!=='completed')t.completedAt=null;
-      Object.assign(t,{title,category:cat,deadline:dlDate,deadlineTime:dlTime,importance:impVal,urgency:urgVal,progress:prog,subtasks});
+      Object.assign(t,{title,category:cat,notes,deadline:dlDate,deadlineTime:dlTime,importance:impVal,urgency:urgVal,progress:prog,subtasks,assignedAccount:newAccount});
     }
-  } else {
+  }else{
     const now=new Date().toISOString();
-    S.todos.push({id:uid(),title,category:cat,createdAt:now,deadline:dlDate,deadlineTime:dlTime,importance:impVal,urgency:urgVal,progress:prog,subtasks,gTaskIds:null,completedAt:prog==='completed'?now:null});
+    S.todos.push({id:uid(),title,category:cat,notes,createdAt:now,deadline:dlDate,deadlineTime:dlTime,importance:impVal,urgency:urgVal,progress:prog,subtasks,gTaskIds:null,assignedAccount:newAccount,completedAt:prog==='completed'?now:null});
   }
   save();closeModal();renderAll();toast(editingId?'更新しました':'追加しました');
 }
-
 function deleteCurrent(){
   if(!editingId)return;
   const t=S.todos.find(x=>x.id===editingId);
   if(!confirm((t?t.title:'')+' を削除しますか？'))return;
-  S.todos=S.todos.filter(t=>t.id!==editingId);
+  S.todos=S.todos.filter(x=>x.id!==editingId);
   save();closeModal();renderAll();toast('削除しました');
 }
-
 function renderAll(){
   const v=S.activeView||'a';
   if(v==='a')renderKanban();if(v==='b')renderMatrix();if(v==='c')renderList();if(v==='d')renderSync();if(v==='e')renderSettings();
