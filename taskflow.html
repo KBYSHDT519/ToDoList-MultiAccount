@@ -167,6 +167,26 @@ textarea{resize:vertical;min-height:60px;line-height:1.5}
 @media(min-width:900px){
   #list-body.col-auto{grid-template-columns:1fr 1fr}
 }
+
+/* ===== STATS VIEW ===== */
+#stats-view{max-width:1100px;margin:0 auto;padding-bottom:24px}
+.stat-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-bottom:18px}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:14px 12px;text-align:center}
+.stat-card-val{font-size:28px;font-weight:800;line-height:1}
+.stat-card-lbl{font-size:11px;color:var(--muted);margin-top:4px}
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.charts-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px}
+.chart-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:16px}
+.chart-card.full{grid-column:1/-1}
+.chart-title{font-size:13px;font-weight:700;color:var(--text2);margin-bottom:12px}
+.chart-legend{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--text2)}
+.legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.hmap-wrap{overflow-x:auto}
+.month-bar-wrap{overflow-x:auto}
+.no-data{color:var(--muted);font-size:12px;text-align:center;padding:24px 0}
+@media(max-width:700px){.charts-grid,.charts-grid-3{grid-template-columns:1fr}}
+
   </style>
 </head>
 <body>
@@ -179,6 +199,7 @@ textarea{resize:vertical;min-height:60px;line-height:1.5}
       <button class="nav-btn" onclick="switchView('c')">List</button>
       <button class="nav-btn" onclick="switchView('d')">Google</button>
       <button class="nav-btn" onclick="switchView('e')">設定</button>
+      <button class="nav-btn" onclick="switchView('f')">統計</button>
     </div>
     <button id="add-btn" onclick="openModal()">+ ToDo</button>
   </div>
@@ -286,6 +307,19 @@ textarea{resize:vertical;min-height:60px;line-height:1.5}
   </div>
 </div>
 
+
+    <!-- STATS -->
+    <div id="view-f" class="view">
+      <div id="stats-view">
+        <div class="stat-cards" id="stat-cards"></div>
+        <div class="charts-grid" id="charts-row1"></div>
+        <div class="charts-grid" id="charts-row2"></div>
+        <div class="chart-card" style="margin-bottom:12px" id="chart-heatmap"></div>
+        <div class="chart-card" style="margin-bottom:12px" id="chart-monthly"></div>
+        <div class="charts-grid-3" id="charts-row3"></div>
+      </div>
+    </div>
+
 <!-- Matrix popup -->
 <div id="mx-popup" onmouseenter="keepMxPopup()" onmouseleave="hideMxPopup()"></div>
 
@@ -315,7 +349,7 @@ textarea{resize:vertical;min-height:60px;line-height:1.5}
 <script>
 const STORAGE_KEY='tf_v2',GSETTINGS_KEY='tf_gset',SETTINGSKEY='tf_settings',TASKS_BASE='https://tasks.googleapis.com/tasks/v1';
 const PROG_LABELS={not_started:'未着手',in_progress:'仕掛中',completed:'完了',on_hold:'保留'};
-const VIEWS=['a','b','c','d','e'];
+const VIEWS=['a','b','c','d','e','f'];
 let S={todos:[],activeView:'a'},G={clientId:'',accounts:[]},CFG={listCols:'col-auto'},gTokens={};
 let editingId=null,impVal=0,urgVal=0,subtasksTemp=[],dragId=null;
 let mxPopupTimer=null,mxActiveTodoId=null;
@@ -457,7 +491,7 @@ function switchView(v){
   document.querySelectorAll('.nav-btn').forEach((el,i)=>el.classList.toggle('active',VIEWS[i]===v));
   document.getElementById('view-'+v).classList.add('active');
   S.activeView=v;save();
-  if(v==='a')renderKanban();if(v==='b')renderMatrix();if(v==='c')renderList();if(v==='d')renderSync();if(v==='e')renderSettings();
+  if(v==='a')renderKanban();if(v==='b')renderMatrix();if(v==='c')renderList();if(v==='d')renderSync();if(v==='e')renderSettings();if(v==='f')renderStats();
 }
 
 /* ---- KANBAN ---- */
@@ -988,7 +1022,308 @@ function deleteCurrent(){
 }
 function renderAll(){
   const v=S.activeView||'a';
-  if(v==='a')renderKanban();if(v==='b')renderMatrix();if(v==='c')renderList();if(v==='d')renderSync();if(v==='e')renderSettings();
+  if(v==='a')renderKanban();if(v==='b')renderMatrix();if(v==='c')renderList();if(v==='d')renderSync();if(v==='e')renderSettings();if(v==='f')renderStats();
+}
+
+
+/* ===== STATS / ANALYTICS ===== */
+function svgNS(tag,attrs,children){
+  attrs=attrs||{};children=children||[];
+  const el=document.createElementNS('http://www.w3.org/2000/svg',tag);
+  for(const[k,v]of Object.entries(attrs))el.setAttribute(k,String(v));
+  for(const c of children)if(c)el.appendChild(typeof c==='string'?document.createTextNode(c):c);
+  return el;
+}
+
+function donutChart(data,cx,cy,r,thick){
+  cx=cx||90;cy=cy||90;r=r||62;thick=thick||22;
+  const total=data.reduce(function(s,d){return s+d.v},0);
+  const svg=svgNS('svg',{viewBox:'0 0 180 180',width:'100%',style:'max-width:180px;display:block;margin:0 auto'});
+  if(!total){
+    svg.appendChild(svgNS('circle',{cx:cx,cy:cy,r:r,fill:'none',stroke:'#374151','stroke-width':thick}));
+    svg.appendChild(svgNS('text',{x:cx,y:cy+5,'text-anchor':'middle',fill:'#9ca3af','font-size':'12'},['データなし']));
+    return svg;
+  }
+  var angle=-Math.PI/2;
+  var TAU=2*Math.PI;
+  data.forEach(function(d){
+    if(!d.v)return;
+    var a=d.v/total*TAU,ea=angle+a;
+    var x1=cx+r*Math.cos(angle),y1=cy+r*Math.sin(angle);
+    var x2=cx+r*Math.cos(ea),y2=cy+r*Math.sin(ea);
+    var lg=a>Math.PI?1:0;
+    var path=svgNS('path',{d:'M'+x1+','+y1+'A'+r+','+r+',0,'+lg+',1,'+x2+','+y2,fill:'none',stroke:d.c,'stroke-width':thick,'stroke-linecap':'butt'});
+    var tt=svgNS('title');tt.textContent=d.l+': '+d.v;path.appendChild(tt);
+    svg.appendChild(path);
+    angle=ea;
+  });
+  svg.appendChild(svgNS('text',{x:cx,y:cy-8,'text-anchor':'middle',fill:'#f9fafb','font-size':'26','font-weight':'700'},[String(total)]));
+  svg.appendChild(svgNS('text',{x:cx,y:cy+14,'text-anchor':'middle',fill:'#9ca3af','font-size':'11'},['件']));
+  return svg;
+}
+
+function stackedHBars(rows){
+  if(!rows.length)return '<div class="no-data">データなし</div>';
+  var maxTotal=Math.max.apply(null,rows.map(function(r){return r.total}).concat([1]));
+  var ROW_H=28,LABEL_W=90,GAP=4,maxW=300;
+  var H=rows.length*(ROW_H+GAP)+4;
+  var W=LABEL_W+maxW+24;
+  var svg=svgNS('svg',{viewBox:'0 0 '+W+' '+H,width:'100%',style:'display:block;max-width:'+W+'px'});
+  rows.forEach(function(row,i){
+    var y=i*(ROW_H+GAP);
+    var lbl=svgNS('text',{x:LABEL_W-6,y:y+ROW_H*0.65,'text-anchor':'end',fill:'#d1d5db','font-size':'11'});
+    lbl.textContent=row.label.length>13?row.label.slice(0,12)+'…':row.label;
+    svg.appendChild(lbl);
+    var x=LABEL_W;
+    row.segments.forEach(function(seg){
+      if(!seg.v)return;
+      var w=Math.max(seg.v/maxTotal*maxW,2);
+      var rect=svgNS('rect',{x:x,y:y+2,width:w,height:ROW_H-4,fill:seg.c,rx:3});
+      var t=svgNS('title');t.textContent=seg.l+': '+seg.v;rect.appendChild(t);
+      svg.appendChild(rect);x+=w;
+    });
+    var cnt=svgNS('text',{x:LABEL_W+maxW+3,y:y+ROW_H*0.65,fill:'#9ca3af','font-size':'10'});
+    cnt.textContent=String(row.total);svg.appendChild(cnt);
+  });
+  return svg;
+}
+
+function dualBarChart(months,s1,s2){
+  var n=months.length,BW=14,GAP=4,LEFT=30,TOP=10,BOT=26;
+  var W=LEFT+n*(BW*2+GAP*3)+10,H=150;
+  var max=Math.max.apply(null,s1.concat(s2).concat([1]));
+  var barH=H-BOT-TOP;
+  var svg=svgNS('svg',{viewBox:'0 0 '+W+' '+H,width:'100%',style:'display:block;min-width:'+W+'px'});
+  svg.appendChild(svgNS('line',{x1:LEFT,y1:H-BOT,x2:W,y2:H-BOT,stroke:'#374151'}));
+  months.forEach(function(m,i){
+    var x=LEFT+i*(BW*2+GAP*3);
+    var h1=Math.round(s1[i]/max*barH),h2=Math.round(s2[i]/max*barH);
+    var r1=svgNS('rect',{x:x,y:H-BOT-h1,width:BW,height:Math.max(h1,0),fill:'#6366f1',rx:2});
+    var t1=svgNS('title');t1.textContent=m+' 作成: '+s1[i];r1.appendChild(t1);svg.appendChild(r1);
+    var r2=svgNS('rect',{x:x+BW+GAP,y:H-BOT-h2,width:BW,height:Math.max(h2,0),fill:'#10b981',rx:2});
+    var t2=svgNS('title');t2.textContent=m+' 完了: '+s2[i];r2.appendChild(t2);svg.appendChild(r2);
+    var lbl=svgNS('text',{x:x+BW,y:H-BOT+14,'text-anchor':'middle',fill:'#9ca3af','font-size':'9'});
+    lbl.textContent=m;svg.appendChild(lbl);
+    if(s1[i]>0){var vl=svgNS('text',{x:x+BW/2,y:H-BOT-h1-2,'text-anchor':'middle',fill:'#a5b4fc','font-size':'9'});vl.textContent=s1[i];svg.appendChild(vl)}
+    if(s2[i]>0){var vl2=svgNS('text',{x:x+BW+GAP+BW/2,y:H-BOT-h2-2,'text-anchor':'middle',fill:'#6ee7b7','font-size':'9'});vl2.textContent=s2[i];svg.appendChild(vl2)}
+  });
+  return svg;
+}
+
+function activityHeatmap(createdByDay,completedByDay){
+  var WEEKS=53,CELL=12,GAP=2,STEP=CELL+GAP,LEFT=24,TOP=20;
+  var W=LEFT+WEEKS*STEP+4,H=TOP+7*STEP+22;
+  var svg=svgNS('svg',{viewBox:'0 0 '+W+' '+H,width:'100%',style:'display:block;min-width:'+W+'px'});
+  var DAY_MS=86400000;
+  var endDate=new Date();endDate.setHours(23,59,59,999);
+  var startDate=new Date(endDate);
+  startDate.setDate(startDate.getDate()-(WEEKS*7-1));
+  startDate.setDate(startDate.getDate()-startDate.getDay());
+  var cur=new Date(startDate),prevMonth=-1;
+  while(cur<=endDate){
+    var week=Math.floor((cur-startDate)/DAY_MS/7);
+    var dow=cur.getDay();
+    var key=cur.toISOString().slice(0,10);
+    var crtd=createdByDay[key]||0,cmpl=completedByDay[key]||0,total=crtd+cmpl;
+    var fill='#1f2937';
+    if(total>=6)fill='#059669';else if(total>=4)fill='#10b981';else if(total>=2)fill='#34d399';else if(total>=1)fill='#6ee7b7';
+    var x=LEFT+week*STEP,y=TOP+dow*STEP;
+    var rect=svgNS('rect',{x:x,y:y,width:CELL,height:CELL,fill:fill,rx:2});
+    var tt=svgNS('title');tt.textContent=key+': 作成'+crtd+' 完了'+cmpl;rect.appendChild(tt);
+    svg.appendChild(rect);
+    if(dow===0&&cur.getMonth()!==prevMonth){
+      prevMonth=cur.getMonth();
+      var ml=svgNS('text',{x:x,y:TOP-6,fill:'#9ca3af','font-size':'9'});
+      ml.textContent=(cur.getMonth()+1)+'月';svg.appendChild(ml);
+    }
+    cur=new Date(cur.getTime()+DAY_MS);
+  }
+  [['月',1],['水',3],['金',5]].forEach(function(p){
+    var lbl=svgNS('text',{x:LEFT-4,y:TOP+p[1]*STEP+CELL*0.75,'text-anchor':'end',fill:'#9ca3af','font-size':'9'});
+    lbl.textContent=p[0];svg.appendChild(lbl);
+  });
+  return svg;
+}
+
+function impUrgHeatmap(todos){
+  var grid=[];for(var i=0;i<5;i++){grid.push([0,0,0,0,0])}
+  todos.filter(function(t){return t.progress!=='completed'}).forEach(function(t){grid[t.importance][t.urgency]++});
+  var maxV=Math.max.apply(null,[].concat.apply([],grid).concat([1]));
+  var CELL=36,GAP=3,LBL=22;
+  var W=LBL+(CELL+GAP)*5,H=LBL+(CELL+GAP)*5+12;
+  var svg=svgNS('svg',{viewBox:'0 0 '+W+' '+H,width:'100%',style:'display:block;max-width:240px;margin:0 auto'});
+  for(var i=0;i<=4;i++){
+    var xl=svgNS('text',{x:LBL+(i*(CELL+GAP))+CELL/2,y:LBL-5,'text-anchor':'middle',fill:'#9ca3af','font-size':'10'});xl.textContent=i;svg.appendChild(xl);
+    var yl=svgNS('text',{x:LBL-4,y:LBL+(4-i)*(CELL+GAP)+CELL*0.7,'text-anchor':'end',fill:'#9ca3af','font-size':'10'});yl.textContent=i;svg.appendChild(yl);
+  }
+  for(var imp=0;imp<=4;imp++){for(var urg=0;urg<=4;urg++){
+    var v=grid[imp][urg];
+    var fill=v?'rgba(99,102,241,'+(v?Math.min(0.2+v/maxV*0.8,1).toFixed(2):0)+')':'#1f2937';
+    var x=LBL+urg*(CELL+GAP),y=LBL+(4-imp)*(CELL+GAP);
+    var rect=svgNS('rect',{x:x,y:y,width:CELL,height:CELL,fill:fill,rx:4});
+    var tt=svgNS('title');tt.textContent='重要'+imp+' 緊急'+urg+': '+v+'件';rect.appendChild(tt);svg.appendChild(rect);
+    if(v>0){var lbl=svgNS('text',{x:x+CELL/2,y:y+CELL/2+5,'text-anchor':'middle',fill:'#f9fafb','font-size':'13','font-weight':'700'});lbl.textContent=v;svg.appendChild(lbl)}
+  }}
+  return svg;
+}
+
+function renderStats(){
+  var todos=S.todos;
+  var total=todos.length;
+  var byP={not_started:0,in_progress:0,completed:0,on_hold:0};
+  todos.forEach(function(t){byP[t.progress]++});
+  var overdue=todos.filter(function(t){return isOverdue(t)}).length;
+  var archived=todos.filter(function(t){return isArchived(t)}).length;
+  var totalSub=todos.reduce(function(s,t){return s+(t.subtasks||[]).length},0);
+  var doneSub=todos.reduce(function(s,t){return s+(t.subtasks||[]).filter(function(s){return s.done}).length},0);
+
+  // Summary cards
+  var cards=[
+    {v:total,l:'総ToDo数',c:'#6366f1'},
+    {v:byP.completed,l:'完了',c:'#10b981'},
+    {v:byP.in_progress,l:'仕掛中',c:'#3b82f6'},
+    {v:byP.on_hold,l:'保留',c:'#f59e0b'},
+    {v:byP.not_started,l:'未着手',c:'#9ca3af'},
+    {v:overdue,l:'期限切れ',c:'#ef4444'},
+    {v:archived,l:'アーカイブ',c:'#7c3aed'},
+    {v:totalSub?Math.round(doneSub/totalSub*100)+'%':'—',l:'サブタスク達成率',c:'#06b6d4'},
+  ];
+  document.getElementById('stat-cards').innerHTML=cards.map(function(c){
+    return '<div class="stat-card"><div class="stat-card-val" style="color:'+c.c+'">'+c.v+'</div><div class="stat-card-lbl">'+c.l+'</div></div>';
+  }).join('');
+
+  // Progress donut
+  var progData=[
+    {v:byP.completed,c:'#10b981',l:'完了'},
+    {v:byP.in_progress,c:'#3b82f6',l:'仕掛中'},
+    {v:byP.on_hold,c:'#f59e0b',l:'保留'},
+    {v:byP.not_started,c:'#6b7280',l:'未着手'},
+  ];
+  var progLegend=progData.map(function(d){return '<div class="legend-item"><div class="legend-dot" style="background:'+d.c+'"></div>'+d.l+': '+d.v+'件</div>'}).join('');
+
+  // Category bars
+  var catMap={};
+  todos.forEach(function(t){
+    var cat=t.category||'(未分類)';
+    if(!catMap[cat])catMap[cat]={not_started:0,in_progress:0,completed:0,on_hold:0,total:0};
+    catMap[cat][t.progress]++;catMap[cat].total++;
+  });
+  var catRows=Object.entries(catMap).sort(function(a,b){return b[1].total-a[1].total}).slice(0,10).map(function(e){
+    return{label:e[0],total:e[1].total,segments:[
+      {v:e[1].completed,c:'#10b981',l:'完了'},{v:e[1].in_progress,c:'#3b82f6',l:'仕掛中'},
+      {v:e[1].on_hold,c:'#f59e0b',l:'保留'},{v:e[1].not_started,c:'#6b7280',l:'未着手'}
+    ]};
+  });
+
+  var row1=document.getElementById('charts-row1');row1.innerHTML='';
+  var c1=document.createElement('div');c1.className='chart-card';
+  c1.innerHTML='<div class="chart-title">進捗の内訳</div>';
+  c1.appendChild(donutChart(progData));
+  c1.innerHTML+='<div class="chart-legend">'+progLegend+'</div>';
+  row1.appendChild(c1);
+
+  var c2=document.createElement('div');c2.className='chart-card';
+  c2.innerHTML='<div class="chart-title">カテゴリ別タスク数（上位10件）</div>';
+  var catSvg=stackedHBars(catRows);
+  if(typeof catSvg==='string')c2.innerHTML+=catSvg;else c2.appendChild(catSvg);
+  c2.innerHTML+='<div class="chart-legend">'+progLegend+'</div>';
+  row1.appendChild(c2);
+
+  // Account bars + Deadline perf
+  var accMap={};
+  todos.forEach(function(t){
+    var em=accountEmail(t)||'（未割当）';
+    if(!accMap[em])accMap[em]={not_started:0,in_progress:0,completed:0,on_hold:0,total:0};
+    accMap[em][t.progress]++;accMap[em].total++;
+  });
+  var accRows=Object.entries(accMap).sort(function(a,b){return b[1].total-a[1].total}).map(function(e){
+    var lbl=e[0].length>22?e[0].slice(0,20)+'…':e[0];
+    return{label:lbl,total:e[1].total,segments:[
+      {v:e[1].completed,c:'#10b981',l:'完了'},{v:e[1].in_progress,c:'#3b82f6',l:'仕掛中'},
+      {v:e[1].on_hold,c:'#f59e0b',l:'保留'},{v:e[1].not_started,c:'#6b7280',l:'未着手'}
+    ]};
+  });
+
+  // Deadline perf donut
+  var comp=todos.filter(function(t){return t.progress==='completed'&&t.deadline});
+  var onTime=0,late=0;
+  comp.forEach(function(t){
+    var dl=new Date(t.deadline+'T23:59');
+    var ca=t.completedAt?new Date(t.completedAt):null;
+    if(ca&&ca<=dl)onTime++;else late++;
+  });
+  var noDl=todos.filter(function(t){return t.progress==='completed'&&!t.deadline}).length;
+  var inc=todos.filter(function(t){return t.progress!=='completed'&&t.deadline&&new Date(t.deadline+'T23:59')<new Date()}).length;
+  var dlData=[{v:onTime,c:'#10b981',l:'期限内完了'},{v:late,c:'#f59e0b',l:'期限超え完了'},{v:noDl,c:'#6366f1',l:'期限なし完了'},{v:inc,c:'#ef4444',l:'期限切れ未完'}];
+
+  var row2=document.getElementById('charts-row2');row2.innerHTML='';
+  var c3=document.createElement('div');c3.className='chart-card';
+  c3.innerHTML='<div class="chart-title">同期アカウント別タスク数</div>';
+  var accSvg=stackedHBars(accRows);
+  if(typeof accSvg==='string')c3.innerHTML+=accSvg;else c3.appendChild(accSvg);
+  c3.innerHTML+='<div class="chart-legend">'+progLegend+'</div>';
+  row2.appendChild(c3);
+
+  var c4=document.createElement('div');c4.className='chart-card';
+  c4.innerHTML='<div class="chart-title">締切の達成状況</div>';
+  c4.appendChild(donutChart(dlData,90,90,62,22));
+  c4.innerHTML+='<div class="chart-legend">'+dlData.map(function(d){return '<div class="legend-item"><div class="legend-dot" style="background:'+d.c+'"></div>'+d.l+'</div>'}).join('')+'</div>';
+  row2.appendChild(c4);
+
+  // Heatmap
+  var createdByDay={},completedByDay={};
+  var DAY_MS=86400000,cutoff=new Date(Date.now()-365*DAY_MS);
+  todos.forEach(function(t){
+    if(t.createdAt){var d=t.createdAt.slice(0,10);if(new Date(d)>=cutoff)createdByDay[d]=(createdByDay[d]||0)+1}
+    if(t.completedAt){var d=t.completedAt.slice(0,10);if(new Date(d)>=cutoff)completedByDay[d]=(completedByDay[d]||0)+1}
+  });
+  var hmCard=document.getElementById('chart-heatmap');
+  hmCard.innerHTML='<div class="chart-title">年間アクティビティ（過去365日 / 作成＋完了）</div><div class="hmap-wrap" id="hmap-inner"></div><div class="chart-legend" style="margin-top:8px"><div class="legend-item"><div class="legend-dot" style="background:#6ee7b7"></div>1件</div><div class="legend-item"><div class="legend-dot" style="background:#34d399"></div>2-3件</div><div class="legend-item"><div class="legend-dot" style="background:#10b981"></div>4-5件</div><div class="legend-item"><div class="legend-dot" style="background:#059669"></div>6件以上</div></div>';
+  document.getElementById('hmap-inner').appendChild(activityHeatmap(createdByDay,completedByDay));
+
+  // Monthly trend
+  var months=[],s1=[],s2=[];
+  for(var m=11;m>=0;m--){
+    var d=new Date();d.setDate(1);d.setMonth(d.getMonth()-m);
+    var key=d.toISOString().slice(0,7);
+    months.push((d.getMonth()+1)+'月');
+    s1.push(todos.filter(function(t){return t.createdAt&&t.createdAt.startsWith(key)}).length);
+    s2.push(todos.filter(function(t){return t.completedAt&&t.completedAt.startsWith(key)}).length);
+  }
+  var mCard=document.getElementById('chart-monthly');
+  mCard.innerHTML='<div class="chart-title">月次トレンド（過去12ヶ月）</div><div class="month-bar-wrap" id="monthly-inner"></div><div class="chart-legend"><div class="legend-item"><div class="legend-dot" style="background:#6366f1"></div>作成</div><div class="legend-item"><div class="legend-dot" style="background:#10b981"></div>完了</div></div>';
+  document.getElementById('monthly-inner').appendChild(dualBarChart(months,s1,s2));
+
+  // Row3: ImpUrg heatmap + importance rate + urgency rate
+  var row3=document.getElementById('charts-row3');row3.innerHTML='';
+
+  var c5=document.createElement('div');c5.className='chart-card';
+  c5.innerHTML='<div class="chart-title">重要度×緊急度 分布（未完了）</div>';
+  c5.appendChild(impUrgHeatmap(todos));
+  c5.innerHTML+='<div style="font-size:10px;color:var(--muted);margin-top:6px;text-align:center">縦: 重要度(★) / 横: 緊急度(!)</div>';
+  row3.appendChild(c5);
+
+  var c6=document.createElement('div');c6.className='chart-card';
+  c6.innerHTML='<div class="chart-title">重要度別 完了率</div>';
+  var impH='';
+  for(var i=0;i<=4;i++){
+    var ts=todos.filter(function(t){return t.importance===i});
+    var cp=ts.filter(function(t){return t.progress==='completed'}).length;
+    var rate=ts.length?Math.round(cp/ts.length*100):0;
+    impH+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-size:11px;color:var(--text2);width:70px;flex-shrink:0">★×'+i+'（'+ts.length+'件）</span><div style="flex:1;background:var(--surface2);border-radius:4px;height:16px;overflow:hidden"><div style="width:'+rate+'%;background:#6366f1;height:100%;border-radius:4px"></div></div><span style="font-size:11px;color:var(--muted);width:36px;text-align:right">'+rate+'%</span></div>';
+  }
+  c6.innerHTML+=impH;row3.appendChild(c6);
+
+  var c7=document.createElement('div');c7.className='chart-card';
+  c7.innerHTML='<div class="chart-title">緊急度別 完了率</div>';
+  var urgH='';
+  for(var i=0;i<=4;i++){
+    var ts=todos.filter(function(t){return t.urgency===i});
+    var cp=ts.filter(function(t){return t.progress==='completed'}).length;
+    var rate=ts.length?Math.round(cp/ts.length*100):0;
+    urgH+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-size:11px;color:var(--text2);width:70px;flex-shrink:0">!×'+i+'（'+ts.length+'件）</span><div style="flex:1;background:var(--surface2);border-radius:4px;height:16px;overflow:hidden"><div style="width:'+rate+'%;background:#f87171;height:100%;border-radius:4px"></div></div><span style="font-size:11px;color:var(--muted);width:36px;text-align:right">'+rate+'%</span></div>';
+  }
+  c7.innerHTML+=urgH;row3.appendChild(c7);
 }
 
 load();
