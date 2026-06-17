@@ -187,6 +187,36 @@ textarea{resize:vertical;min-height:60px;line-height:1.5}
 .no-data{color:var(--muted);font-size:12px;text-align:center;padding:24px 0}
 @media(max-width:700px){.charts-grid,.charts-grid-3{grid-template-columns:1fr}}
 
+
+/* ===== QUADRANT TOOLTIP ===== */
+#qtip{position:fixed;background:var(--surface2);border:1px solid var(--accent);border-radius:var(--r2);padding:12px 14px;max-width:230px;font-size:12px;line-height:1.75;color:var(--text2);z-index:90;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:opacity .18s;top:0;left:0}
+#qtip.show{opacity:1}
+.mx-q-title{cursor:help;user-select:none}
+.mx-info-btn{background:none;border:1px solid var(--border2);border-radius:50%;width:22px;height:22px;font-size:12px;color:var(--muted);padding:0;line-height:1;margin-left:8px;vertical-align:middle;flex-shrink:0}
+.mx-info-btn:hover{color:var(--accent);border-color:var(--accent)}
+/* ===== EISENHOWER INFO MODAL ===== */
+#ei-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:105;align-items:center;justify-content:center}
+#ei-bg.open{display:flex}
+#ei-box{background:var(--surface);border-radius:var(--r2);width:min(600px,96vw);max-height:90vh;overflow-y:auto;padding:24px;box-shadow:var(--shadow);border:1px solid var(--border2)}
+.ei-quad{border-radius:var(--r);padding:12px;margin-bottom:10px}
+.ei-quad-title{font-weight:700;font-size:13px;margin-bottom:4px}
+.ei-quad-body{font-size:12px;color:var(--text2);line-height:1.7}
+/* ===== DUP MODAL ===== */
+#dup-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:110;align-items:center;justify-content:center}
+#dup-bg.open{display:flex}
+#dup-box{background:var(--surface);border-radius:var(--r2);width:min(720px,96vw);max-height:92vh;overflow-y:auto;padding:22px;box-shadow:var(--shadow);border:1px solid var(--border2)}
+.dup-pair{background:var(--surface2);border-radius:var(--r);padding:14px;margin-bottom:12px;border:1px solid var(--border2)}
+.dup-pair-label{font-size:11px;color:var(--warn);margin-bottom:8px;font-weight:600}
+.dup-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px}
+.dup-card{background:var(--surface);border-radius:var(--r);padding:10px;border:1px solid var(--border);font-size:12px}
+.dup-card-title{font-weight:700;margin-bottom:6px;line-height:1.4}
+.dup-card-meta{color:var(--muted);line-height:1.7;font-size:11px}
+.dup-actions{display:flex;gap:6px;flex-wrap:wrap}
+@media(max-width:500px){.dup-cards{grid-template-columns:1fr}}
+/* acc checkbox */
+.acc-check-wrap{display:flex;align-items:flex-start;gap:10px}
+.acc-check{width:16px;height:16px;accent-color:var(--accent);cursor:pointer;margin-top:3px;flex-shrink:0}
+
   </style>
 </head>
 <body>
@@ -218,17 +248,17 @@ textarea{resize:vertical;min-height:60px;line-height:1.5}
     <!-- MATRIX -->
     <div id="view-b" class="view">
       <div id="matrix-outer">
-        <div id="matrix-x-label">← 緊急度 →</div>
+        <div id="matrix-x-label" style="display:flex;align-items:center;justify-content:center;gap:6px">← 緊急度 →<button class="mx-info-btn" onclick="showEiModal()" title="アイゼンハワーマトリクスとは">?</button></div>
         <div id="matrix-body">
           <div id="matrix-y-label">← 重要度 →</div>
           <div id="matrix-grid">
             <div></div><div class="mx-col-lbl">高い（緊急）</div><div class="mx-col-lbl">低い（非緊急）</div>
             <div class="mx-row-lbl">重要</div>
-            <div id="q1" class="mx-q"><div class="mx-q-title" style="color:var(--danger)">すぐやる</div></div>
-            <div id="q2" class="mx-q"><div class="mx-q-title" style="color:var(--warn)">計画する</div></div>
+            <div id="q1" class="mx-q"><div class="mx-q-title" style="color:var(--danger)" onmouseenter="showQTip('q1',this)" onmouseleave="hideQTip()" onclick="showQTip('q1',this)">すぐやる ⓘ</div></div>
+            <div id="q2" class="mx-q"><div class="mx-q-title" style="color:var(--warn)" onmouseenter="showQTip('q2',this)" onmouseleave="hideQTip()" onclick="showQTip('q2',this)">計画する ⓘ</div></div>
             <div class="mx-row-lbl">低い</div>
-            <div id="q3" class="mx-q"><div class="mx-q-title" style="color:var(--info)">委任する</div></div>
-            <div id="q4" class="mx-q"><div class="mx-q-title" style="color:var(--muted)">削除検討</div></div>
+            <div id="q3" class="mx-q"><div class="mx-q-title" style="color:var(--info)" onmouseenter="showQTip('q3',this)" onmouseleave="hideQTip()" onclick="showQTip('q3',this)">委任する ⓘ</div></div>
+            <div id="q4" class="mx-q"><div class="mx-q-title" style="color:var(--muted)" onmouseenter="showQTip('q4',this)" onmouseleave="hideQTip()" onclick="showQTip('q4',this)">削除検討 ⓘ</div></div>
           </div>
         </div>
       </div>
@@ -257,7 +287,16 @@ textarea{resize:vertical;min-height:60px;line-height:1.5}
           </div>
           <button class="btn-primary" onclick="saveGoogleSettings()">保存</button>
         </div>
-        <div class="sync-section"><h3>Googleアカウント</h3><div id="acc-list"></div><button class="btn-secondary" onclick="addAccount()">+ アカウントを追加</button></div>
+        <div class="sync-section">
+          <h3>Googleアカウント</h3>
+          <div id="acc-list"></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:10px">
+            <button class="btn-secondary" onclick="addAccount()">+ アカウントを追加</button>
+            <button class="btn-secondary" onclick="reAuthSelected()">☑ 選択アカウントを再認証</button>
+            <button class="btn-secondary" onclick="reAuthAll()">↺ 全アカウントを再認証</button>
+          </div>
+          <p style="font-size:11px;color:var(--muted);margin-top:6px">※ リロード後はアクセストークンがリセットされます。再認証ボタンで復元できます。</p>
+        </div>
         <div class="sync-section">
           <h3>同期</h3>
           <p style="font-size:12px;color:var(--muted);margin-bottom:10px">各ToDoの「同期アカウント」設定に基づいて同期します。同期アカウント未設定のToDoは同期されません。</p>
@@ -265,6 +304,7 @@ textarea{resize:vertical;min-height:60px;line-height:1.5}
             <button class="btn-primary" onclick="runSync()">双方向同期</button>
             <button class="btn-secondary" onclick="pushOnly()">↑ TaskFlow→Google</button>
             <button class="btn-secondary" onclick="pullOnly()">↓ Google→TaskFlow</button>
+            <button class="btn-secondary" onclick="runDupCheck(false)">🔍 重複チェック</button>
             <span id="sync-status" style="font-size:11px;color:var(--muted)"></span>
           </div>
           <div id="sync-log" class="sync-log">同期ログがここに表示されます。</div>
@@ -320,13 +360,64 @@ textarea{resize:vertical;min-height:60px;line-height:1.5}
       </div>
     </div>
 
+
+<!-- Quadrant tooltip -->
+<div id="qtip" onmouseenter="keepQTip()" onmouseleave="hideQTip()"></div>
+
+<!-- Eisenhower info modal -->
+<div id="ei-bg" onclick="if(event.target===this)closeEiModal()">
+  <div id="ei-box">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+      <h2 style="font-size:17px;font-weight:700">アイゼンハワーマトリクスとは</h2>
+      <button class="btn-secondary btn-sm" onclick="closeEiModal()">✕</button>
+    </div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:16px">第34代アメリカ大統領アイゼンハワーが実践した時間管理の手法です。タスクを<strong style="color:var(--text)">「重要度」</strong>と<strong style="color:var(--text)">「緊急度」</strong>の2軸で4象限に分類し、優先順位を明確にします。</p>
+    <div class="ei-quad" style="background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3)">
+      <div class="ei-quad-title" style="color:var(--danger)">🔴 すぐやる（重要 × 緊急）</div>
+      <div class="ei-quad-body">今すぐ行動が必要な最優先タスク。締切が差し迫っており、目標に直結する重要な仕事です。放置すると危機的状況になります。<br><em>例: 今日締切の報告書・緊急の顧客対応・システム障害対応</em></div>
+    </div>
+    <div class="ei-quad" style="background:rgba(245,158,11,.1);border:1px solid rgba(245,158,11,.3)">
+      <div class="ei-quad-title" style="color:var(--warn)">🟡 計画する（重要 × 非緊急）</div>
+      <div class="ei-quad-body">最も価値が高い領域。長期的な目標・スキルアップ・関係構築など。計画を立てて定期的に取り組むことで、Q1（すぐやる）タスクを減らせます。成功者が最も多くの時間を使う領域です。<br><em>例: 資格取得の勉強・健康管理・プロジェクト計画</em></div>
+    </div>
+    <div class="ei-quad" style="background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.3)">
+      <div class="ei-quad-title" style="color:var(--info)">🔵 委任する（非重要 × 緊急）</div>
+      <div class="ei-quad-body">急ぎに見えても自分でなければできないことでないタスク。可能であれば他者に委任し、自分はより重要なことに集中しましょう。どうしても自分でやる場合は手短に。<br><em>例: 定型的な問い合わせ対応・会議の日程調整・事務処理</em></div>
+    </div>
+    <div class="ei-quad" style="background:rgba(107,114,128,.1);border:1px solid rgba(107,114,128,.3)">
+      <div class="ei-quad-title" style="color:var(--muted)">⚫ 削除検討（非重要 × 非緊急）</div>
+      <div class="ei-quad-body">時間の浪費につながりやすいタスク。本当に必要か再考し、可能な限り削除・排除しましょう。気晴らしや習慣的な惰性タスクがここに集まりがちです。<br><em>例: 目的のないSNS閲覧・重要度の低い会議・過去の習慣作業</em></div>
+    </div>
+    <p style="font-size:12px;color:var(--muted);margin-top:12px;line-height:1.7">💡 <strong style="color:var(--text2)">活用のコツ:</strong> Q2（計画する）に意識的に時間を投資することで、Q1の緊急タスクが自然と減っていきます。</p>
+  </div>
+</div>
+
+<!-- Duplicate checker modal -->
+<div id="dup-bg" onclick="if(event.target===this)closeDupModal()">
+  <div id="dup-box">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+      <h2 style="font-size:16px;font-weight:700">重複チェッカー</h2>
+      <button class="btn-secondary btn-sm" onclick="closeDupModal()">✕</button>
+    </div>
+    <p id="dup-summary" style="font-size:12px;color:var(--muted);margin-bottom:14px"></p>
+    <div id="dup-pairs-list"></div>
+    <div id="dup-footer" style="margin-top:14px;padding-top:14px;border-top:1px solid var(--border);display:none">
+      <p style="font-size:13px;color:var(--text2);margin-bottom:10px">全ての重複を処理しました。再同期して確認しますか？</p>
+      <div style="display:flex;gap:8px"><button class="btn-primary" onclick="dupReSync()">はい（再同期）</button><button class="btn-secondary" onclick="closeDupModal()">いいえ</button></div>
+    </div>
+  </div>
+</div>
+
 <!-- Matrix popup -->
 <div id="mx-popup" onmouseenter="keepMxPopup()" onmouseleave="hideMxPopup()"></div>
 
 <!-- Modal -->
 <div id="modal-bg" onclick="if(event.target===this)closeModal()">
   <div id="modal">
-    <h2 id="modal-title">ToDo 追加</h2>
+    <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:16px">
+      <h2 id="modal-title" style="margin-bottom:0">ToDo 追加</h2>
+      <span id="modal-created-date" style="font-size:11px;color:var(--muted);white-space:nowrap;flex-shrink:0"></span>
+    </div>
     <div class="form-row"><label>タイトル *</label><input type="text" id="f-title" placeholder="タイトルを入力"></div>
     <div class="form-row"><label>カテゴリ</label><div style="display:flex;gap:6px"><select id="f-cat" style="flex:1" onchange="onCatSelectChange()"></select><input type="text" id="f-cat-new" placeholder="新規カテゴリ名" style="flex:1;display:none"></div></div>
     <div class="form-row"><label>メモ</label><textarea id="f-notes" placeholder="メモ（Googleタスクのメモ欄に表示されます）"></textarea></div>
@@ -668,17 +759,22 @@ function renderAccList(){
   el.innerHTML=G.accounts.map((acc,i)=>{
     const tok=gTokens[acc.email],authed=tok&&tok.expiry>Date.now();
     const assignedCount=S.todos.filter(t=>(t.assignedAccount===acc.email)||(t.gTaskIds&&t.gTaskIds[acc.email]&&!t.assignedAccount)).length;
-    return`<div class="acc-card"><div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
+    return`<div class="acc-card acc-check-wrap">
+      <input type="checkbox" class="acc-check" id="acc-chk-${i}" checked>
       <div style="flex:1;min-width:0">
-        <div class="acc-email" style="word-break:break-all">${esc(acc.email)}</div>
-        <div class="acc-status ${authed?'ok':'err'}">${authed?'認証済':'未認証'}</div>
-        <div class="acc-cats" style="margin-top:4px">同期対象: ${assignedCount}件のToDo</div>
+        <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:10px">
+          <div style="flex:1;min-width:0">
+            <div class="acc-email" style="word-break:break-all">${esc(acc.email)}</div>
+            <div class="acc-status ${authed?'ok':'err'}">${authed?'✓ 認証済':'✗ 未認証（要再認証）'}</div>
+            <div class="acc-cats" style="margin-top:4px">同期対象: ${assignedCount}件のToDo</div>
+          </div>
+          <div style="display:flex;gap:5px;flex-shrink:0;flex-wrap:wrap">
+            <button class="btn-secondary btn-sm" onclick="authAccount(${i})">認証</button>
+            <button class="btn-danger btn-sm" onclick="removeAccount(${i})">削除</button>
+          </div>
+        </div>
       </div>
-      <div style="display:flex;gap:5px;flex-shrink:0;flex-wrap:wrap">
-        <button class="btn-secondary btn-sm" onclick="authAccount(${i})">認証</button>
-        <button class="btn-danger btn-sm" onclick="removeAccount(${i})">削除</button>
-      </div>
-    </div></div>`;
+    </div>`;
   }).join('');
 }
 function saveGoogleSettings(){G.clientId=(document.getElementById('g-client-id')?.value||'').trim();saveG();toast('設定を保存しました')}
@@ -884,6 +980,8 @@ async function runSync(){
   const statusEl=document.getElementById('sync-status');if(statusEl)statusEl.textContent='最終同期: '+new Date().toLocaleString();
   logSync('===== 完了 Push:'+totalPushed+' Pull更新:'+totalPulled+' 新規取込:'+totalImported+' エラー:'+totalErrors+' =====','log-ok');
   renderAll();
+  // 同期後に重複チェック
+  setTimeout(()=>runDupCheck(true),400);
 }
 
 async function pushOnly(){
@@ -948,6 +1046,13 @@ function refreshAccountSelector(currentEmail){
 function openModal(id=null){
   editingId=id;const t=id?S.todos.find(x=>x.id===id):null;
   document.getElementById('modal-title').textContent=t?'ToDo 編集':'ToDo 追加';
+  var dateEl=document.getElementById('modal-created-date');
+  if(dateEl){
+    if(t&&t.createdAt){
+      var cd=new Date(t.createdAt);
+      dateEl.textContent=cd.getFullYear()+'年'+(cd.getMonth()+1+'').padStart(2,'0')+'月'+(cd.getDate()+'').padStart(2,'0')+'日追加';
+    }else{dateEl.textContent=''}
+  }
   document.getElementById('del-btn').style.display=t?'':'none';
   document.getElementById('f-title').value=t?t.title:'';
   document.getElementById('f-notes').value=t?t.notes||'':'';
@@ -1324,6 +1429,214 @@ function renderStats(){
     urgH+='<div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><span style="font-size:11px;color:var(--text2);width:70px;flex-shrink:0">!×'+i+'（'+ts.length+'件）</span><div style="flex:1;background:var(--surface2);border-radius:4px;height:16px;overflow:hidden"><div style="width:'+rate+'%;background:#f87171;height:100%;border-radius:4px"></div></div><span style="font-size:11px;color:var(--muted);width:36px;text-align:right">'+rate+'%</span></div>';
   }
   c7.innerHTML+=urgH;row3.appendChild(c7);
+}
+
+
+/* ===== QUADRANT TOOLTIP ===== */
+var qtipTimer2=null;
+var QTIP_DATA={
+  q1:{title:'🔴 すぐやる',desc:'重要かつ緊急。今すぐ取り組むべき最優先タスクです。放置すると危機的状況になる可能性があります。'},
+  q2:{title:'🟡 計画する',desc:'重要だが非緊急。長期目標やスキルアップなど。計画を立てて取り組む最も価値の高い領域です。'},
+  q3:{title:'🔵 委任する',desc:'非重要だが緊急。急ぎに見えても他者に任せられることが多い。自分はより重要なことに集中しましょう。'},
+  q4:{title:'⚫ 削除検討',desc:'非重要かつ非緊急。時間の浪費につながりやすい。本当に必要か再考し、可能なら削除・排除しましょう。'}
+};
+function showQTip(q,el){
+  clearTimeout(qtipTimer2);
+  var data=QTIP_DATA[q];if(!data)return;
+  var tip=document.getElementById('qtip');
+  tip.innerHTML='<strong style="font-size:12px;color:var(--text)">'+data.title+'</strong><br>'+data.desc;
+  var rect=el.getBoundingClientRect();
+  var tw=240;
+  var left=rect.left,top=rect.bottom+6;
+  if(left+tw>window.innerWidth)left=window.innerWidth-tw-8;
+  if(left<4)left=4;
+  if(top+100>window.innerHeight)top=rect.top-110;
+  tip.style.left=left+'px';tip.style.top=top+'px';
+  tip.classList.add('show');
+}
+function hideQTip(){qtipTimer2=setTimeout(function(){document.getElementById('qtip').classList.remove('show')},200)}
+function keepQTip(){clearTimeout(qtipTimer2)}
+
+/* ===== EISENHOWER MODAL ===== */
+function showEiModal(){document.getElementById('ei-bg').classList.add('open')}
+function closeEiModal(){document.getElementById('ei-bg').classList.remove('open')}
+
+/* ===== RE-AUTH HELPERS ===== */
+function getCheckedIndices(){
+  return G.accounts.map(function(_,i){
+    var cb=document.getElementById('acc-chk-'+i);
+    return(cb&&cb.checked)?i:-1;
+  }).filter(function(i){return i>=0});
+}
+function authAccountAsync(i){
+  return new Promise(function(resolve){
+    var acc=G.accounts[i];
+    if(!G.clientId){toast('クライアントIDを設定してください');resolve();return}
+    if(typeof google==='undefined'||!google.accounts||!google.accounts.oauth2){toast('Google認証ライブラリ読み込み中');resolve();return}
+    var client=google.accounts.oauth2.initTokenClient({
+      client_id:G.clientId,
+      scope:'https://www.googleapis.com/auth/tasks',
+      hint:acc.email,
+      callback:function(resp){
+        if(resp.error){toast('認証失敗('+acc.email+'): '+resp.error)}
+        else{gTokens[acc.email]={token:resp.access_token,expiry:Date.now()+(resp.expires_in*1000)-60000};toast(acc.email+' 認証成功')}
+        renderAccList();resolve();
+      }
+    });
+    client.requestAccessToken({prompt:'select_account'});
+  });
+}
+async function reAuthSelected(){
+  var idxs=getCheckedIndices();
+  if(!idxs.length){toast('アカウントを選択してください');return}
+  for(var i=0;i<idxs.length;i++){await authAccountAsync(idxs[i])}
+}
+async function reAuthAll(){
+  for(var i=0;i<G.accounts.length;i++){await authAccountAsync(i)}
+}
+
+/* ===== DUPLICATE CHECKER ===== */
+function levenshtein(a,b){
+  if(Math.abs(a.length-b.length)>5)return 99;
+  var m=[],i,j;
+  for(i=0;i<=b.length;i++)m[i]=[i];
+  for(j=0;j<=a.length;j++)m[0][j]=j;
+  for(i=1;i<=b.length;i++)for(j=1;j<=a.length;j++)
+    m[i][j]=b[i-1]===a[j-1]?m[i-1][j-1]:1+Math.min(m[i-1][j],m[i][j-1],m[i-1][j-1]);
+  return m[b.length][a.length];
+}
+function findDuplicates(){
+  var todos=S.todos;
+  var pairs=[];
+  for(var i=0;i<todos.length;i++){
+    for(var j=i+1;j<todos.length;j++){
+      var a=todos[i],b=todos[j];
+      var ta=a.title.trim().toLowerCase(),tb=b.title.trim().toLowerCase();
+      var conf=0,reason='';
+      if(ta===tb){conf=100;reason='タイトルが完全一致'}
+      else if(ta.length>4&&(ta.includes(tb)||tb.includes(ta))){conf=75;reason='タイトルが部分一致'}
+      else if(ta.length>6&&tb.length>6&&levenshtein(ta,tb)<=2){conf=65;reason='タイトルが非常に類似（'+levenshtein(ta,tb)+'文字差）'}
+      if(conf>0&&a.deadline&&b.deadline&&a.deadline===b.deadline){conf=Math.min(conf+15,100);reason+='・締切が同じ'}
+      if(conf>=65)pairs.push({a:a,b:b,conf:conf,reason:reason,resolved:false});
+    }
+  }
+  return pairs.sort(function(x,y){return y.conf-x.conf});
+}
+
+var dupPairs=[];
+var dupAfterSync=false;
+
+function runDupCheck(afterSync){
+  dupAfterSync=afterSync;
+  dupPairs=findDuplicates();
+  if(!dupPairs.length){
+    if(afterSync){logSync('重複チェック: 重複なし ✓','log-ok')}
+    else{toast('重複するToDoは見つかりませんでした')}
+    return;
+  }
+  if(afterSync)logSync('⚠ 重複の可能性: '+dupPairs.length+'件検出 → 重複チェッカーを開きます','log-err');
+  showDupModal();
+}
+
+function showDupModal(){
+  var bg=document.getElementById('dup-bg');
+  var summary=document.getElementById('dup-summary');
+  var list=document.getElementById('dup-pairs-list');
+  var footer=document.getElementById('dup-footer');
+  if(!bg)return;
+  summary.textContent='重複の可能性があるToDoが '+dupPairs.length+' 件見つかりました。各ペアについて処理を選択してください。';
+  footer.style.display='none';
+  renderDupPairs();
+  bg.classList.add('open');
+}
+function closeDupModal(){document.getElementById('dup-bg').classList.remove('open')}
+
+function renderDupPairs(){
+  var list=document.getElementById('dup-pairs-list');
+  var remaining=dupPairs.filter(function(p){return!p.resolved});
+  if(!remaining.length){
+    list.innerHTML='<div style="text-align:center;padding:16px;color:var(--success);font-weight:700">✓ 全ての重複を処理しました</div>';
+    document.getElementById('dup-footer').style.display='block';
+    return;
+  }
+  list.innerHTML=remaining.map(function(p,idx){
+    var realIdx=dupPairs.indexOf(p);
+    return '<div class="dup-pair" id="dup-pair-'+realIdx+'">'
+      +'<div class="dup-pair-label">⚠ '+p.reason+' (一致度 '+p.conf+'%)</div>'
+      +'<div class="dup-cards">'
+        +buildDupCard(p.a,'A')
+        +buildDupCard(p.b,'B')
+      +'</div>'
+      +'<div class="dup-actions">'
+        +'<button class="btn-secondary btn-sm" onclick="resolveDup('+realIdx+',\'keepA\')">✓ Aを残す（Bを削除）</button>'
+        +'<button class="btn-secondary btn-sm" onclick="resolveDup('+realIdx+',\'keepB\')">✓ Bを残す（Aを削除）</button>'
+        +'<button class="btn-primary btn-sm" onclick="resolveDup('+realIdx+',\'merge\')">⇌ マージ（Aを基準にBの情報を統合）</button>'
+        +'<button class="btn-secondary btn-sm" onclick="resolveDup('+realIdx+',\'skip\')">スキップ</button>'
+      +'</div>'
+    +'</div>';
+  }).join('');
+}
+
+function buildDupCard(t,label){
+  var dl=t.deadline?'期限: '+t.deadline:'期限なし';
+  var prog={'not_started':'未着手','in_progress':'仕掛中','completed':'完了','on_hold':'保留'}[t.progress]||t.progress;
+  var acc=accountEmail(t)||'同期なし';
+  var sub=t.subtasks&&t.subtasks.length?'サブタスク: '+t.subtasks.length+'件':'';
+  return '<div class="dup-card">'
+    +'<div style="font-size:10px;color:var(--muted);margin-bottom:4px">ToDo '+label+'</div>'
+    +'<div class="dup-card-title">'+esc(t.title)+'</div>'
+    +'<div class="dup-card-meta">'
+      +(t.category?'カテゴリ: '+esc(t.category)+'<br>':'')
+      +'進捗: '+prog+'<br>'
+      +dl+'<br>'
+      +'重要★'+t.importance+' 緊急!'+t.urgency+'<br>'
+      +(t.notes?'メモ: '+esc(t.notes.slice(0,40))+(t.notes.length>40?'…':'')+'<br>':'')
+      +(sub?sub+'<br>':'')
+      +'同期: '+esc(acc.length>30?acc.slice(0,28)+'…':acc)
+    +'</div>'
+  +'</div>';
+}
+
+function resolveDup(idx,action){
+  var pair=dupPairs[idx];if(!pair)return;
+  var a=pair.a,b=pair.b;
+  if(action==='keepA'){
+    S.todos=S.todos.filter(function(t){return t.id!==b.id});
+    toast('Aを残しBを削除しました');
+  }else if(action==='keepB'){
+    S.todos=S.todos.filter(function(t){return t.id!==a.id});
+    toast('Bを残しAを削除しました');
+  }else if(action==='merge'){
+    // Merge B into A: take best of both
+    var kept=a,gone=b;
+    if(!kept.notes&&gone.notes)kept.notes=gone.notes;
+    if(kept.importance<gone.importance)kept.importance=gone.importance;
+    if(kept.urgency<gone.urgency)kept.urgency=gone.urgency;
+    if(!kept.deadline&&gone.deadline){kept.deadline=gone.deadline;kept.deadlineTime=gone.deadlineTime}
+    if(!kept.category&&gone.category)kept.category=gone.category;
+    // merge subtasks
+    var kst=kept.subtasks||[],gst=gone.subtasks||[];
+    gst.forEach(function(gs){
+      if(!kst.some(function(ks){return ks.title.toLowerCase()===gs.title.toLowerCase()}))
+        kst.push(gs);
+    });
+    kept.subtasks=kst;
+    // merge gTaskIds
+    if(gone.gTaskIds){
+      if(!kept.gTaskIds)kept.gTaskIds={};
+      Object.assign(kept.gTaskIds,gone.gTaskIds);
+    }
+    if(gone.assignedAccount&&!kept.assignedAccount)kept.assignedAccount=gone.assignedAccount;
+    S.todos=S.todos.filter(function(t){return t.id!==gone.id});
+    toast('マージしました（Bの情報をAに統合）');
+  }
+  pair.resolved=true;
+  save();renderAll();renderDupPairs();
+}
+
+async function dupReSync(){
+  closeDupModal();
+  await runSync();
 }
 
 load();
