@@ -25,6 +25,8 @@ code{background:var(--surface2);padding:1px 5px;border-radius:4px;font-size:12px
 #content{flex:1;overflow:hidden;position:relative}
 .view{display:none;height:100%;overflow:auto;padding:14px}
 .view.active{display:block}
+
+/* COMMON CARD */
 .task-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:10px 12px;cursor:pointer;transition:border-color .15s}
 .task-card:hover{border-color:var(--accent)}
 .card-title{font-weight:600;font-size:13px;margin-bottom:6px;word-break:break-word;line-height:1.4}
@@ -35,6 +37,7 @@ code{background:var(--surface2);padding:1px 5px;border-radius:4px;font-size:12px
 .tag-prog-in_progress{background:#1e3a5f;color:#60a5fa}
 .tag-prog-completed{background:#064e3b;color:#6ee7b7}
 .tag-prog-on_hold{background:#451a03;color:#fbbf24}
+.tag-gsync{background:#1a3a5c;color:#93c5fd;font-size:10px;padding:1px 5px}
 .stars{font-size:11px;letter-spacing:-1px}
 .star-imp{color:#fbbf24}
 .star-urg{color:#f87171}
@@ -42,6 +45,8 @@ code{background:var(--surface2);padding:1px 5px;border-radius:4px;font-size:12px
 .card-dl.overdue{color:var(--danger);font-weight:600}
 .subtask-bar{height:4px;background:var(--surface2);border-radius:2px;margin-top:5px;overflow:hidden}
 .subtask-bar-fill{height:100%;background:var(--success);border-radius:2px}
+
+/* KANBAN */
 #view-a{padding:0}
 #kanban-board{display:flex;height:100%;overflow-x:auto;padding:14px;gap:10px}
 .kb-col{background:var(--surface);border-radius:var(--r2);flex:1;min-width:190px;max-width:320px;display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--border)}
@@ -50,6 +55,8 @@ code{background:var(--surface2);padding:1px 5px;border-radius:4px;font-size:12px
 .kb-body{flex:1;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:6px;min-height:80px}
 .kb-body.drag-over{background:rgba(99,102,241,.15);outline:2px dashed var(--accent);outline-offset:-4px;border-radius:var(--r)}
 .task-card.dragging{opacity:.35}
+
+/* MATRIX */
 #view-b{padding:10px}
 #matrix-outer{display:flex;flex-direction:column;height:100%;min-height:500px}
 #matrix-x-label{text-align:center;font-size:12px;color:var(--muted);padding:4px 0}
@@ -58,9 +65,31 @@ code{background:var(--surface2);padding:1px 5px;border-radius:4px;font-size:12px
 #matrix-grid{display:grid;grid-template-columns:auto 1fr 1fr;grid-template-rows:auto 1fr 1fr;gap:6px;flex:1;overflow:hidden}
 .mx-col-lbl{text-align:center;font-size:11px;color:var(--muted);padding:2px}
 .mx-row-lbl{display:flex;align-items:center;font-size:11px;color:var(--muted);writing-mode:vertical-rl;transform:rotate(180deg);justify-content:center;padding:0 2px}
-.mx-q{background:var(--surface);border-radius:var(--r);padding:8px;overflow-y:auto;display:flex;flex-direction:column;gap:5px;border:1px solid var(--border)}
-.mx-q-title{font-size:11px;font-weight:700;margin-bottom:4px;padding-bottom:4px;border-bottom:1px solid var(--border);flex-shrink:0}
+.mx-q{background:var(--surface);border-radius:var(--r);padding:8px;border:1px solid var(--border);display:flex;flex-direction:row;flex-wrap:wrap;align-content:flex-start;gap:6px;overflow-y:auto}
+.mx-q-title{font-size:11px;font-weight:700;padding-bottom:5px;border-bottom:1px solid var(--border);width:100%;flex-shrink:0;margin-bottom:2px}
 #q1{border-top:3px solid var(--danger)}#q2{border-top:3px solid var(--warn)}#q3{border-top:3px solid var(--info)}#q4{border-top:3px solid var(--muted)}
+
+/* STICKY NOTE (Matrix cards) */
+.mx-note{width:100px;min-height:60px;border-radius:4px;padding:7px 8px;cursor:pointer;position:relative;box-shadow:2px 2px 8px rgba(0,0,0,.35);flex-shrink:0;transition:transform .12s,box-shadow .12s}
+.mx-note:hover{transform:translateY(-2px) rotate(-1deg);box-shadow:4px 6px 14px rgba(0,0,0,.5)}
+.mx-note-q1{background:#fee2e2;color:#1f2937}
+.mx-note-q2{background:#fef9c3;color:#1f2937}
+.mx-note-q3{background:#dbeafe;color:#1f2937}
+.mx-note-q4{background:#f3f4f6;color:#374151}
+.mx-note-title{font-weight:700;font-size:11px;line-height:1.35;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;margin-bottom:4px}
+.mx-note-dl{font-size:10px;color:#6b7280;margin-top:auto}
+.mx-note-gsync{font-size:9px;color:#3b82f6;margin-top:3px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.mx-note-prog{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:3px;flex-shrink:0}
+.prog-dot-not_started{background:#9ca3af}
+.prog-dot-in_progress{background:#60a5fa}
+.prog-dot-completed{background:#10b981}
+.prog-dot-on_hold{background:#fbbf24}
+
+/* MATRIX POPUP */
+#mx-popup{position:fixed;background:var(--surface);border:1px solid var(--border2);border-radius:var(--r2);padding:14px 16px;width:260px;box-shadow:var(--shadow);z-index:80;opacity:0;pointer-events:none;transition:opacity .15s;top:0;left:0}
+#mx-popup.show{opacity:1;pointer-events:auto}
+
+/* LIST */
 #list-controls{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
 #list-controls input{max-width:180px}
 #list-controls select{max-width:140px}
@@ -70,6 +99,8 @@ code{background:var(--surface2);padding:1px 5px;border-radius:4px;font-size:12px
 .list-row-info{flex:1;min-width:0}
 .list-row-title{font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .list-row-meta{display:flex;gap:5px;align-items:center;margin-top:4px;flex-wrap:wrap}
+
+/* SYNC VIEW */
 #sync-view{max-width:680px;margin:0 auto}
 .sync-section{background:var(--surface);border-radius:var(--r2);padding:16px;margin-bottom:14px;border:1px solid var(--border)}
 .sync-section h3{font-size:14px;font-weight:700;margin-bottom:12px;color:var(--text2)}
@@ -78,11 +109,12 @@ code{background:var(--surface2);padding:1px 5px;border-radius:4px;font-size:12px
 .acc-card{background:var(--surface2);border-radius:var(--r);padding:10px 12px;margin-bottom:8px;border:1px solid var(--border2)}
 .acc-email{font-weight:600;font-size:13px}
 .acc-status{font-size:11px;margin-top:3px}
-.acc-status.ok{color:var(--success)}
-.acc-status.err{color:var(--danger)}
+.acc-status.ok{color:var(--success)}.acc-status.err{color:var(--danger)}
 .acc-cats{font-size:11px;color:var(--muted);margin-top:3px}
 .sync-log{background:var(--surface2);border-radius:var(--r);padding:10px;font-family:monospace;font-size:11px;max-height:200px;overflow-y:auto;white-space:pre-wrap;border:1px solid var(--border2)}
 .log-ok{color:var(--success)}.log-err{color:var(--danger)}.log-info{color:var(--info)}
+
+/* MODAL */
 #modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:100;align-items:center;justify-content:center}
 #modal-bg.open{display:flex}
 #modal{background:var(--surface);border-radius:var(--r2);width:min(620px,96vw);max-height:92vh;overflow-y:auto;padding:22px;box-shadow:var(--shadow);border:1px solid var(--border2)}
@@ -91,20 +123,17 @@ code{background:var(--surface2);padding:1px 5px;border-radius:4px;font-size:12px
 .form-row label{display:block;font-size:12px;color:var(--muted);margin-bottom:4px}
 .stars-input{display:flex;gap:2px;align-items:center}
 .star-btn{background:none;border:none;font-size:22px;padding:1px 3px;color:var(--surface3);line-height:1}
-.star-btn.imp-active{color:#fbbf24}
-.star-btn.urg-active{color:#f87171}
+.star-btn.imp-active{color:#fbbf24}.star-btn.urg-active{color:#f87171}
 .subtask-list{display:flex;flex-direction:column;gap:4px;margin-bottom:8px}
 .subtask-item{display:flex;align-items:center;gap:6px}
 .subtask-item input[type=text]{flex:1}
 .subtask-item button{background:var(--danger);color:#fff;padding:3px 8px;font-size:11px;flex-shrink:0}
 .modal-actions{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap}
-.btn-primary{background:var(--accent);color:#fff}
-.btn-danger{background:var(--danger);color:#fff}
-.btn-secondary{background:var(--surface2);color:var(--text)}
-.btn-sm{padding:4px 10px;font-size:12px}
+.btn-primary{background:var(--accent);color:#fff}.btn-danger{background:var(--danger);color:#fff}.btn-secondary{background:var(--surface2);color:var(--text)}.btn-sm{padding:4px 10px;font-size:12px}
+
 #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--surface2);border:1px solid var(--border2);padding:9px 20px;border-radius:24px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .3s;z-index:200;white-space:nowrap;box-shadow:var(--shadow)}
 #toast.show{opacity:1}
-@media(max-width:640px){#kanban-board{flex-direction:column}.kb-col{max-width:100%}}
+@media(max-width:640px){#kanban-board{flex-direction:column}.kb-col{max-width:100%}.mx-note{width:90px}}
   </style>
 </head>
 <body>
@@ -149,14 +178,8 @@ code{background:var(--surface2);padding:1px 5px;border-radius:4px;font-size:12px
       <div id="list-controls">
         <input type="text" id="list-search" placeholder="タイトル検索" oninput="renderList()">
         <select id="list-cat" onchange="renderList()"><option value="">全カテゴリ</option></select>
-        <select id="list-prog" onchange="renderList()">
-          <option value="">全進捗</option><option value="not_started">未着手</option>
-          <option value="in_progress">仕掛中</option><option value="on_hold">保留</option><option value="completed">完了</option>
-        </select>
-        <select id="list-sort" onchange="renderList()">
-          <option value="createdAt_desc">登録日 新→旧</option><option value="createdAt_asc">登録日 旧→新</option>
-          <option value="deadline_asc">締切 近→遠</option><option value="importance_desc">重要度 高→低</option><option value="urgency_desc">緊急度 高→低</option>
-        </select>
+        <select id="list-prog" onchange="renderList()"><option value="">全進捗</option><option value="not_started">未着手</option><option value="in_progress">仕掛中</option><option value="on_hold">保留</option><option value="completed">完了</option></select>
+        <select id="list-sort" onchange="renderList()"><option value="createdAt_desc">登録日 新→旧</option><option value="createdAt_asc">登録日 旧→新</option><option value="deadline_asc">締切 近→遠</option><option value="importance_desc">重要度 高→低</option><option value="urgency_desc">緊急度 高→低</option></select>
         <span id="list-count" style="font-size:12px;color:var(--muted)"></span>
       </div>
       <div id="list-body"></div>
@@ -167,26 +190,13 @@ code{background:var(--surface2);padding:1px 5px;border-radius:4px;font-size:12px
           <h3>Google API 設定</h3>
           <div class="sync-row"><label>OAuth 2.0 クライアントID</label><input type="text" id="g-client-id" placeholder="xxxx.apps.googleusercontent.com"></div>
           <button class="btn-primary" onclick="saveGoogleSettings()">保存</button>
-          <details style="margin-top:12px">
-            <summary style="cursor:pointer;font-size:12px;color:var(--muted)">設定方法（クリックで展開）</summary>
+          <details style="margin-top:12px"><summary style="cursor:pointer;font-size:12px;color:var(--muted)">設定方法（クリックで展開）</summary>
             <div style="margin-top:10px;font-size:12px;color:var(--text2);line-height:1.9;background:var(--surface2);padding:12px;border-radius:var(--r)">
-              <ol style="padding-left:18px;margin-top:6px">
-                <li>Google Cloud Console を個人Gmailで開く（組織なしのプロジェクト）</li>
-                <li>Google Tasks API を有効化</li>
-                <li>認証情報 → OAuthクライアントID → ウェブアプリ → <code>http://localhost:8080</code> を追加</li>
-                <li>OAuth同意画面 → 外部 → テストユーザーに自分を追加</li>
-                <li>クライアントIDを上に貼り付け → 保存</li>
-              </ol>
-              <p style="margin-top:8px;color:var(--warn)">このアプリは <code>http://localhost:8080/taskflow.html</code> で開いてください</p>
-              <p style="color:var(--muted)">サーバー起動: <code>cd ファイルのフォルダ</code> → <code>python3 -m http.server 8080</code></p>
+              <ol style="padding-left:18px"><li>Google Cloud Console を個人Gmailで開く（組織なしのプロジェクト）</li><li>Google Tasks API を有効化</li><li>認証情報 → OAuthクライアントID → ウェブアプリ → <code>https://kbyshdt519.github.io</code> を追加</li><li>OAuth同意画面 → 外部 → テストユーザーに自分を追加</li></ol>
             </div>
           </details>
         </div>
-        <div class="sync-section">
-          <h3>Googleアカウント</h3>
-          <div id="acc-list"></div>
-          <button class="btn-secondary" onclick="addAccount()">+ アカウントを追加</button>
-        </div>
+        <div class="sync-section"><h3>Googleアカウント</h3><div id="acc-list"></div><button class="btn-secondary" onclick="addAccount()">+ アカウントを追加</button></div>
         <div class="sync-section">
           <h3>同期</h3>
           <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center">
@@ -201,73 +211,33 @@ code{background:var(--surface2);padding:1px 5px;border-radius:4px;font-size:12px
     </div>
   </div>
 </div>
+
+<!-- Matrix popup -->
+<div id="mx-popup" onmouseenter="keepMxPopup()" onmouseleave="hideMxPopup()"></div>
+
+<!-- Modal -->
 <div id="modal-bg" onclick="if(event.target===this)closeModal()">
   <div id="modal">
     <h2 id="modal-title">ToDo 追加</h2>
     <div class="form-row"><label>タイトル *</label><input type="text" id="f-title" placeholder="タイトルを入力"></div>
-    <div class="form-row">
-      <label>カテゴリ</label>
-      <div style="display:flex;gap:6px">
-        <select id="f-cat" style="flex:1" onchange="onCatSelectChange()"></select>
-        <input type="text" id="f-cat-new" placeholder="新規カテゴリ名" style="flex:1;display:none">
-      </div>
-    </div>
-    <div class="form-row">
-      <label>締切日</label>
-      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
-        <label style="display:flex;gap:5px;align-items:center;color:var(--text);margin-bottom:0;cursor:pointer">
-          <input type="checkbox" id="f-dl-check" onchange="toggleDL()" style="width:auto">締切あり
-        </label>
-        <input type="date" id="f-dl-date" style="display:none;flex:1;min-width:130px">
-        <input type="time" id="f-dl-time" style="display:none;width:110px">
-      </div>
-    </div>
-    <div class="form-row">
-      <label>重要度 (0-4)</label>
-      <div class="stars-input" id="imp-stars">
-        <span style="font-size:12px;color:var(--muted);width:20px" id="imp-val">0</span>
-        <button type="button" class="star-btn" data-v="1" onclick="setStar('imp',1)">★</button>
-        <button type="button" class="star-btn" data-v="2" onclick="setStar('imp',2)">★</button>
-        <button type="button" class="star-btn" data-v="3" onclick="setStar('imp',3)">★</button>
-        <button type="button" class="star-btn" data-v="4" onclick="setStar('imp',4)">★</button>
-      </div>
-    </div>
-    <div class="form-row">
-      <label>緊急度 (0-4)</label>
-      <div class="stars-input" id="urg-stars">
-        <span style="font-size:12px;color:var(--muted);width:20px" id="urg-val">0</span>
-        <button type="button" class="star-btn" data-v="1" onclick="setStar('urg',1)">!</button>
-        <button type="button" class="star-btn" data-v="2" onclick="setStar('urg',2)">!</button>
-        <button type="button" class="star-btn" data-v="3" onclick="setStar('urg',3)">!</button>
-        <button type="button" class="star-btn" data-v="4" onclick="setStar('urg',4)">!</button>
-      </div>
-    </div>
-    <div class="form-row">
-      <label>進捗</label>
-      <select id="f-prog">
-        <option value="not_started">未着手</option><option value="in_progress">仕掛中</option>
-        <option value="on_hold">保留</option><option value="completed">完了</option>
-      </select>
-    </div>
-    <div class="form-row">
-      <label>サブタスク</label>
-      <div id="subtask-list" class="subtask-list"></div>
-      <button type="button" class="btn-secondary btn-sm" onclick="addSubtask()" style="margin-top:4px">+ サブタスク追加</button>
-    </div>
-    <div class="modal-actions">
-      <button class="btn-primary" onclick="saveTodo()">保存</button>
-      <button class="btn-danger" id="del-btn" onclick="deleteCurrent()" style="display:none">削除</button>
-      <button class="btn-secondary" onclick="closeModal()">キャンセル</button>
-    </div>
+    <div class="form-row"><label>カテゴリ</label><div style="display:flex;gap:6px"><select id="f-cat" style="flex:1" onchange="onCatSelectChange()"></select><input type="text" id="f-cat-new" placeholder="新規カテゴリ名" style="flex:1;display:none"></div></div>
+    <div class="form-row"><label>締切日</label><div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap"><label style="display:flex;gap:5px;align-items:center;color:var(--text);margin-bottom:0;cursor:pointer"><input type="checkbox" id="f-dl-check" onchange="toggleDL()" style="width:auto">締切あり</label><input type="date" id="f-dl-date" style="display:none;flex:1;min-width:130px"><input type="time" id="f-dl-time" style="display:none;width:110px"></div></div>
+    <div class="form-row"><label>重要度 (0-4)</label><div class="stars-input" id="imp-stars"><span style="font-size:12px;color:var(--muted);width:20px" id="imp-val">0</span><button type="button" class="star-btn" data-v="1" onclick="setStar('imp',1)">★</button><button type="button" class="star-btn" data-v="2" onclick="setStar('imp',2)">★</button><button type="button" class="star-btn" data-v="3" onclick="setStar('imp',3)">★</button><button type="button" class="star-btn" data-v="4" onclick="setStar('imp',4)">★</button></div></div>
+    <div class="form-row"><label>緊急度 (0-4)</label><div class="stars-input" id="urg-stars"><span style="font-size:12px;color:var(--muted);width:20px" id="urg-val">0</span><button type="button" class="star-btn" data-v="1" onclick="setStar('urg',1)">!</button><button type="button" class="star-btn" data-v="2" onclick="setStar('urg',2)">!</button><button type="button" class="star-btn" data-v="3" onclick="setStar('urg',3)">!</button><button type="button" class="star-btn" data-v="4" onclick="setStar('urg',4)">!</button></div></div>
+    <div class="form-row"><label>進捗</label><select id="f-prog"><option value="not_started">未着手</option><option value="in_progress">仕掛中</option><option value="on_hold">保留</option><option value="completed">完了</option></select></div>
+    <div class="form-row"><label>サブタスク</label><div id="subtask-list" class="subtask-list"></div><button type="button" class="btn-secondary btn-sm" onclick="addSubtask()" style="margin-top:4px">+ サブタスク追加</button></div>
+    <div class="modal-actions"><button class="btn-primary" onclick="saveTodo()">保存</button><button class="btn-danger" id="del-btn" onclick="deleteCurrent()" style="display:none">削除</button><button class="btn-secondary" onclick="closeModal()">キャンセル</button></div>
   </div>
 </div>
 <div id="toast"></div>
+
 <script>
 const STORAGE_KEY='tf_v2',GSETTINGS_KEY='tf_gset',TASKS_BASE='https://tasks.googleapis.com/tasks/v1';
 const PROG_LABELS={not_started:'未着手',in_progress:'仕掛中',completed:'完了',on_hold:'保留'};
 const VIEWS=['a','b','c','d'];
 let S={todos:[],activeView:'a'},G={clientId:'',accounts:[]},gTokens={};
 let editingId=null,impVal=0,urgVal=0,subtasksTemp=[],dragId=null;
+let mxPopupTimer=null,mxActiveTodoId=null;
 
 function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(S))}
 function saveG(){localStorage.setItem(GSETTINGS_KEY,JSON.stringify(G))}
@@ -287,6 +257,18 @@ function isOverdue(t){if(!t.deadline||t.progress==='completed')return false;cons
 function quadrant(t){const imp=t.importance>=2,urg=t.urgency>=2;return imp&&urg?'q1':imp&&!urg?'q2':!imp&&urg?'q3':'q4'}
 function progTag(p){return`<span class="tag tag-prog-${p}">${PROG_LABELS[p]||p}</span>`}
 
+// Google同期アカウントバッジ
+function gSyncBadge(t){
+  if(!t.gTaskIds)return '';
+  const emails=Object.keys(t.gTaskIds);
+  if(!emails.length)return '';
+  return emails.map(e=>{
+    const short=e.length>16?e.substring(0,14)+'..':e;
+    return`<span class="tag tag-gsync" title="${esc(e)}">G: ${esc(short)}</span>`;
+  }).join('');
+}
+
+// 通常カード（Kanban / List）
 function makeCard(t,draggable=false){
   const imp='★'.repeat(t.importance)+'☆'.repeat(4-t.importance);
   const urg='!'.repeat(t.urgency)+'.'.repeat(4-t.urgency);
@@ -299,6 +281,7 @@ function makeCard(t,draggable=false){
       ${t.category?`<span class="tag tag-cat">${esc(t.category)}</span>`:''}
       ${progTag(t.progress)}
       <span class="stars star-imp">${imp}</span><span class="stars star-urg">${urg}</span>
+      ${gSyncBadge(t)}
       ${sub.length?`<span class="tag" style="background:var(--surface2);color:var(--muted)">${subDone}/${sub.length}</span>`:''}
     </div>
     ${dl?`<div class="card-dl${over?' overdue':''}">${esc(dl)}${over?' 期限切れ':''}</div>`:''}
@@ -306,6 +289,72 @@ function makeCard(t,draggable=false){
   </div>`;
 }
 
+// 付箋カード（Matrix専用）
+const MX_NOTE_CLS={q1:'mx-note-q1',q2:'mx-note-q2',q3:'mx-note-q3',q4:'mx-note-q4'};
+function makeStickyNote(t,q){
+  const dl=deadlineStr(t),over=isOverdue(t);
+  const gEmails=t.gTaskIds?Object.keys(t.gTaskIds):[];
+  const gShort=gEmails.map(e=>e.split('@')[0].substring(0,8)).join(', ');
+  const isMobile=!window.matchMedia('(hover: hover)').matches;
+  const clickFn=isMobile?`onMxNoteTap(event,'${t.id}',this)`:`openModal('${t.id}')`;
+  const hoverAttrs=isMobile?'':`onmouseenter="showMxPopup('${t.id}',this)" onmouseleave="hideMxPopup()"`;
+  return`<div class="mx-note ${MX_NOTE_CLS[q]}" onclick="${clickFn}" ${hoverAttrs}>
+    <div style="display:flex;align-items:flex-start;gap:3px;margin-bottom:3px">
+      <span class="mx-note-prog prog-dot-${t.progress}"></span>
+      <div class="mx-note-title">${esc(t.title)}</div>
+    </div>
+    ${dl?`<div class="mx-note-dl${over?' overdue':''}">${esc(t.deadline)}${over?' !':''}</div>`:''}
+    ${gShort?`<div class="mx-note-gsync">G:${esc(gShort)}</div>`:''}
+  </div>`;
+}
+
+// マトリックスポップアップ
+function buildPopupContent(t){
+  const imp='★'.repeat(t.importance)+'☆'.repeat(4-t.importance);
+  const urg='!'.repeat(t.urgency)+'.'.repeat(4-t.urgency);
+  const dl=deadlineStr(t),over=isOverdue(t);
+  const sub=t.subtasks||[];
+  const gEmails=t.gTaskIds?Object.keys(t.gTaskIds):[];
+  return`<div style="font-weight:700;font-size:13px;line-height:1.4;margin-bottom:8px">${esc(t.title)}</div>
+    <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px">
+      ${t.category?`<span class="tag tag-cat">${esc(t.category)}</span>`:''}
+      ${progTag(t.progress)}
+      <span class="stars star-imp" style="font-size:12px">${imp}</span>
+      <span class="stars star-urg" style="font-size:12px">${urg}</span>
+    </div>
+    ${dl?`<div class="card-dl${over?' overdue':''}" style="margin-bottom:5px">期限: ${esc(dl)}${over?' 期限切れ':''}</div>`:''}
+    ${sub.length?`<div style="font-size:11px;color:var(--text2);margin-bottom:5px">${sub.map(s=>`<div>${s.done?'☑':'☐'} ${esc(s.title)}</div>`).join('')}</div>`:''}
+    ${gEmails.length?`<div style="font-size:10px;color:var(--info);margin-bottom:8px">同期: ${gEmails.map(esc).join('<br>')}</div>`:''}
+    <button class="btn-secondary btn-sm" onclick="hideMxPopupNow();openModal('${t.id}')" style="width:100%">編集する</button>`;
+}
+
+function showMxPopup(id,el){
+  clearTimeout(mxPopupTimer);
+  mxActiveTodoId=id;
+  const t=S.todos.find(x=>x.id===id);
+  if(!t)return;
+  const popup=document.getElementById('mx-popup');
+  popup.innerHTML=buildPopupContent(t);
+  const rect=el.getBoundingClientRect();
+  const pw=270,ph=220;
+  let left=rect.right+8,top=rect.top;
+  if(left+pw>window.innerWidth)left=rect.left-pw-8;
+  if(left<4)left=4;
+  if(top+ph>window.innerHeight)top=window.innerHeight-ph-8;
+  if(top<4)top=4;
+  popup.style.left=left+'px';popup.style.top=top+'px';
+  popup.classList.add('show');
+}
+function hideMxPopup(){mxPopupTimer=setTimeout(()=>{document.getElementById('mx-popup').classList.remove('show');mxActiveTodoId=null},200)}
+function keepMxPopup(){clearTimeout(mxPopupTimer)}
+function hideMxPopupNow(){clearTimeout(mxPopupTimer);document.getElementById('mx-popup').classList.remove('show');mxActiveTodoId=null}
+function onMxNoteTap(e,id,el){
+  e.stopPropagation();
+  if(mxActiveTodoId===id){hideMxPopupNow()}else{showMxPopup(id,el)}
+}
+document.addEventListener('click',()=>hideMxPopupNow());
+
+// VIEW SWITCHING
 function switchView(v){
   document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach((el,i)=>el.classList.toggle('active',VIEWS[i]===v));
@@ -314,6 +363,7 @@ function switchView(v){
   if(v==='a')renderKanban();if(v==='b')renderMatrix();if(v==='c')renderList();if(v==='d')renderSync();
 }
 
+// KANBAN
 function renderKanban(){
   ['not_started','in_progress','on_hold','completed'].forEach(p=>{
     const body=document.getElementById('kb-'+p),cnt=document.getElementById('cnt-'+p);
@@ -333,12 +383,18 @@ function onDrop(e){
   dragId=null;
 }
 
+// MATRIX
 function renderMatrix(){
   const qs={q1:[],q2:[],q3:[],q4:[]};
   S.todos.filter(t=>t.progress!=='completed').forEach(t=>qs[quadrant(t)].push(t));
-  ['q1','q2','q3','q4'].forEach(q=>{const el=document.getElementById(q);const title=el.querySelector('.mx-q-title').outerHTML;el.innerHTML=title+qs[q].map(t=>makeCard(t)).join('')});
+  ['q1','q2','q3','q4'].forEach(q=>{
+    const el=document.getElementById(q);
+    const title=el.querySelector('.mx-q-title').outerHTML;
+    el.innerHTML=title+qs[q].map(t=>makeStickyNote(t,q)).join('');
+  });
 }
 
+// LIST
 function renderList(){
   const search=(document.getElementById('list-search')?.value||'').toLowerCase();
   const catFilter=document.getElementById('list-cat')?.value||'';
@@ -363,14 +419,12 @@ function renderList(){
   body.innerHTML=todos.map(t=>{
     const imp='★'.repeat(t.importance)+'☆'.repeat(4-t.importance),urg='!'.repeat(t.urgency)+'.'.repeat(4-t.urgency);
     const dl=deadlineStr(t),over=isOverdue(t);
-    return`<div class="list-row" onclick="openModal('${t.id}')"><div class="list-row-info"><div class="list-row-title">${esc(t.title)}</div><div class="list-row-meta">${t.category?`<span class="tag tag-cat">${esc(t.category)}</span>`:''} ${progTag(t.progress)}<span class="stars star-imp">${imp}</span><span class="stars star-urg">${urg}</span>${dl?`<span class="card-dl${over?' overdue':''}">${esc(dl)}</span>`:''}</div></div></div>`;
+    return`<div class="list-row" onclick="openModal('${t.id}')"><div class="list-row-info"><div class="list-row-title">${esc(t.title)}</div><div class="list-row-meta">${t.category?`<span class="tag tag-cat">${esc(t.category)}</span>`:''} ${progTag(t.progress)}<span class="stars star-imp">${imp}</span><span class="stars star-urg">${urg}</span>${gSyncBadge(t)}${dl?`<span class="card-dl${over?' overdue':''}">${esc(dl)}</span>`:''}</div></div></div>`;
   }).join('');
 }
 
-function renderSync(){
-  const cidEl=document.getElementById('g-client-id');if(cidEl)cidEl.value=G.clientId||'';
-  renderAccList();
-}
+// SYNC VIEW
+function renderSync(){const cidEl=document.getElementById('g-client-id');if(cidEl)cidEl.value=G.clientId||'';renderAccList()}
 function renderAccList(){
   const el=document.getElementById('acc-list');if(!el)return;
   if(!G.accounts.length){el.innerHTML='<p style="font-size:12px;color:var(--muted);margin-bottom:10px">アカウントが登録されていません。</p>';return}
@@ -384,6 +438,7 @@ function addAccount(){const email=prompt('Googleアカウントのメールア�
 function removeAccount(i){if(!confirm(G.accounts[i].email+' を削除しますか？'))return;delete gTokens[G.accounts[i].email];G.accounts.splice(i,1);saveG();renderAccList()}
 function editAccountCats(i){const acc=G.accounts[i];const cur=(acc.categories||[]).join(', ');const input=prompt(acc.email+' のカテゴリ（カンマ区切り、空欄で全て）:',cur);if(input===null)return;acc.categories=input.split(',').map(s=>s.trim()).filter(Boolean);saveG();renderAccList()}
 
+// GOOGLE OAUTH
 function authAccount(i){
   const acc=G.accounts[i];
   if(!G.clientId){toast('先にクライアントIDを設定して保存してください');return}
@@ -392,6 +447,7 @@ function authAccount(i){
   client.requestAccessToken({prompt:'select_account'});
 }
 
+// GOOGLE TASKS API
 async function gApi(email,method,path,body=null){
   const tok=gTokens[email];
   if(!tok||tok.expiry<=Date.now())throw new Error(email+' のトークンが無効です。再認証してください。');
@@ -419,7 +475,6 @@ function decodeNotes(notes){if(!notes||!notes.includes('[TaskFlow]'))return null
 function todoToGTask(todo){const task={title:todo.title,notes:encodeNotes(todo),status:todo.progress==='completed'?'completed':'needsAction'};if(todo.deadline)task.due=todo.deadline+'T00:00:00.000Z';return task}
 function gtaskToNewTodo(gt,email,catHint){return{id:uid(),title:gt.title||'(タイトルなし)',category:catHint||'',createdAt:gt.updated||new Date().toISOString(),deadline:gt.due?gt.due.substring(0,10):null,deadlineTime:null,importance:0,urgency:0,progress:gt.status==='completed'?'completed':'not_started',subtasks:[],gTaskIds:{[email]:gt.id}}}
 
-// ===== 全Googleリストから取込 (FIX: マイタスク等も対象) =====
 async function importFromAllLists(email,taskFlowListId,trackedGIds){
   let imported=0;
   try{
@@ -437,7 +492,7 @@ async function importFromAllLists(email,taskFlowListId,trackedGIds){
             logSync('  取込 ['+list.title+']: "'+gt.title+'"');
           }
         }
-      }catch(e){logSync('  "'+list.title+'"取得エラー: '+e.message,'log-err')}
+      }catch(e){logSync('  "'+list.title+'"エラー: '+e.message,'log-err')}
     }
   }catch(e){logSync('  全リスト取得エラー: '+e.message,'log-err')}
   return imported;
@@ -456,7 +511,6 @@ async function runSync(){
     try{
       logSync('['+acc.email+'] TaskFlowリスト確認中...');
       const listId=await ensureTaskList(acc.email);
-      logSync('['+acc.email+'] Push開始...');
       const gTasks0=await fetchAllTasks(acc.email,listId);
       const gByMetaId={};for(const gt of gTasks0){const m=decodeNotes(gt.notes);if(m)gByMetaId[m.id]=gt.id}
       for(const todo of todosForAccount(acc)){
@@ -469,7 +523,6 @@ async function runSync(){
         }catch(e){logSync('  PUSH失敗 "'+todo.title+'": '+e.message,'log-err');totalErrors++}
       }
       logSync('['+acc.email+'] Push完了: '+pushed+'件','log-ok');
-      logSync('['+acc.email+'] Pull開始...');
       const freshTasks=await fetchAllTasks(acc.email,listId);
       const trackedGIds=new Set();
       S.todos.forEach(t=>{if(t.gTaskIds&&t.gTaskIds[acc.email])trackedGIds.add(t.gTaskIds[acc.email])});
@@ -531,7 +584,6 @@ async function pullOnly(){
         if(meta){const local=S.todos.find(t=>t.id===meta.id);if(local){if(gt.status==='completed'&&local.progress!=='completed'){local.progress='completed';pulled++}if(!local.gTaskIds)local.gTaskIds={};local.gTaskIds[acc.email]=gt.id;trackedGIds.add(gt.id)}}
         else if(!trackedGIds.has(gt.id)){S.todos.push(gtaskToNewTodo(gt,acc.email,''));trackedGIds.add(gt.id);imported++;logSync('  取込 [TaskFlow]: "'+gt.title+'"')}
       }
-      logSync('['+acc.email+'] 他のリストを確認中...');
       const imp2=await importFromAllLists(acc.email,listId,trackedGIds);
       imported+=imp2;
       logSync('['+acc.email+'] Pull完了: '+pulled+'件更新, '+imported+'件新規取込','log-ok');
@@ -541,6 +593,7 @@ async function pullOnly(){
   renderAll();
 }
 
+// MODAL
 function openModal(id=null){
   editingId=id;const t=id?S.todos.find(x=>x.id===id):null;
   document.getElementById('modal-title').textContent=t?'ToDo 編集':'ToDo 追加';
@@ -596,7 +649,7 @@ function renderAll(){const v=S.activeView||'a';if(v==='a')renderKanban();if(v===
 
 load();
 switchView(S.activeView||'a');
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();hideMxPopupNow()}});
 </script>
 </body>
 </html>
