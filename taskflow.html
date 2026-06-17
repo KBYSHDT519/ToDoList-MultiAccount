@@ -15,18 +15,20 @@ input,select,textarea{background:var(--surface2);border:1px solid var(--border2)
 input:focus,select:focus,textarea:focus{border-color:var(--accent)}
 select option{background:var(--surface2)}
 code{background:var(--surface2);padding:1px 5px;border-radius:4px;font-size:12px}
+
+/* ===== APP LAYOUT ===== */
 #app{display:flex;flex-direction:column;height:100vh}
-#header{background:var(--surface);border-bottom:1px solid var(--border);padding:8px 16px;display:flex;align-items:center;gap:10px;flex-shrink:0}
-#header h1{font-size:18px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap}
-#nav{display:flex;gap:3px;margin-left:auto}
-.nav-btn{background:transparent;color:var(--muted);border:1px solid transparent;padding:5px 12px;font-size:13px}
+#header{background:var(--surface);border-bottom:1px solid var(--border);padding:8px 12px;display:flex;align-items:center;gap:8px;flex-shrink:0;flex-wrap:wrap}
+#header h1{font-size:18px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap;flex-shrink:0}
+#nav{display:flex;gap:3px;flex:1;justify-content:center;flex-wrap:wrap}
+.nav-btn{background:transparent;color:var(--muted);border:1px solid transparent;padding:6px 14px;font-size:13px;border-radius:var(--r);min-width:64px;text-align:center}
 .nav-btn.active{background:var(--accent);color:#fff}
-#add-btn{background:var(--accent);color:#fff;padding:6px 14px;margin-left:8px;white-space:nowrap}
+#add-btn{background:var(--accent);color:#fff;padding:6px 14px;flex-shrink:0;white-space:nowrap}
 #content{flex:1;overflow:hidden;position:relative}
 .view{display:none;height:100%;overflow:auto;padding:14px}
 .view.active{display:block}
 
-/* COMMON CARD */
+/* ===== COMMON CARD ===== */
 .task-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:10px 12px;cursor:pointer;transition:border-color .15s}
 .task-card:hover{border-color:var(--accent)}
 .card-title{font-weight:600;font-size:13px;margin-bottom:6px;word-break:break-word;line-height:1.4}
@@ -39,14 +41,13 @@ code{background:var(--surface2);padding:1px 5px;border-radius:4px;font-size:12px
 .tag-prog-on_hold{background:#451a03;color:#fbbf24}
 .tag-gsync{background:#1a3a5c;color:#93c5fd;font-size:10px;padding:1px 5px}
 .stars{font-size:11px;letter-spacing:-1px}
-.star-imp{color:#fbbf24}
-.star-urg{color:#f87171}
+.star-imp{color:#fbbf24}.star-urg{color:#f87171}
 .card-dl{font-size:11px;color:var(--muted);margin-top:4px}
 .card-dl.overdue{color:var(--danger);font-weight:600}
 .subtask-bar{height:4px;background:var(--surface2);border-radius:2px;margin-top:5px;overflow:hidden}
 .subtask-bar-fill{height:100%;background:var(--success);border-radius:2px}
 
-/* KANBAN */
+/* ===== KANBAN ===== */
 #view-a{padding:0}
 #kanban-board{display:flex;height:100%;overflow-x:auto;padding:14px;gap:10px}
 .kb-col{background:var(--surface);border-radius:var(--r2);flex:1;min-width:190px;max-width:320px;display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--border)}
@@ -55,8 +56,9 @@ code{background:var(--surface2);padding:1px 5px;border-radius:4px;font-size:12px
 .kb-body{flex:1;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:6px;min-height:80px}
 .kb-body.drag-over{background:rgba(99,102,241,.15);outline:2px dashed var(--accent);outline-offset:-4px;border-radius:var(--r)}
 .task-card.dragging{opacity:.35}
+.kb-archived-note{font-size:11px;color:var(--muted);text-align:center;padding:6px 0;border-top:1px solid var(--border);margin-top:4px}
 
-/* MATRIX */
+/* ===== MATRIX ===== */
 #view-b{padding:10px}
 #matrix-outer{display:flex;flex-direction:column;height:100%;min-height:500px}
 #matrix-x-label{text-align:center;font-size:12px;color:var(--muted);padding:4px 0}
@@ -69,38 +71,51 @@ code{background:var(--surface2);padding:1px 5px;border-radius:4px;font-size:12px
 .mx-q-title{font-size:11px;font-weight:700;padding-bottom:5px;border-bottom:1px solid var(--border);width:100%;flex-shrink:0;margin-bottom:2px}
 #q1{border-top:3px solid var(--danger)}#q2{border-top:3px solid var(--warn)}#q3{border-top:3px solid var(--info)}#q4{border-top:3px solid var(--muted)}
 
-/* STICKY NOTE (Matrix cards) */
+/* ===== STICKY NOTE (Matrix) ===== */
 .mx-note{width:100px;min-height:60px;border-radius:4px;padding:7px 8px;cursor:pointer;position:relative;box-shadow:2px 2px 8px rgba(0,0,0,.35);flex-shrink:0;transition:transform .12s,box-shadow .12s}
 .mx-note:hover{transform:translateY(-2px) rotate(-1deg);box-shadow:4px 6px 14px rgba(0,0,0,.5)}
-.mx-note-q1{background:#fee2e2;color:#1f2937}
-.mx-note-q2{background:#fef9c3;color:#1f2937}
-.mx-note-q3{background:#dbeafe;color:#1f2937}
-.mx-note-q4{background:#f3f4f6;color:#374151}
+.mx-note-q1{background:#fee2e2;color:#1f2937}.mx-note-q2{background:#fef9c3;color:#1f2937}
+.mx-note-q3{background:#dbeafe;color:#1f2937}.mx-note-q4{background:#f3f4f6;color:#374151}
 .mx-note-title{font-weight:700;font-size:11px;line-height:1.35;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;margin-bottom:4px}
 .mx-note-dl{font-size:10px;color:#6b7280;margin-top:auto}
 .mx-note-gsync{font-size:9px;color:#3b82f6;margin-top:3px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 .mx-note-prog{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:3px;flex-shrink:0}
-.prog-dot-not_started{background:#9ca3af}
-.prog-dot-in_progress{background:#60a5fa}
-.prog-dot-completed{background:#10b981}
-.prog-dot-on_hold{background:#fbbf24}
+.prog-dot-not_started{background:#9ca3af}.prog-dot-in_progress{background:#60a5fa}
+.prog-dot-completed{background:#10b981}.prog-dot-on_hold{background:#fbbf24}
 
-/* MATRIX POPUP */
+/* ===== MATRIX POPUP ===== */
 #mx-popup{position:fixed;background:var(--surface);border:1px solid var(--border2);border-radius:var(--r2);padding:14px 16px;width:260px;box-shadow:var(--shadow);z-index:80;opacity:0;pointer-events:none;transition:opacity .15s;top:0;left:0}
 #mx-popup.show{opacity:1;pointer-events:auto}
 
-/* LIST */
+/* ===== LIST ===== */
 #list-controls{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;align-items:center}
 #list-controls input{max-width:180px}
 #list-controls select{max-width:140px}
-#list-body{display:flex;flex-direction:column;gap:5px}
-.list-row{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:10px 14px;display:flex;align-items:center;gap:12px;cursor:pointer;transition:border-color .15s}
-.list-row:hover{border-color:var(--accent)}
+#list-body{display:grid;gap:6px}
+#list-body.col-1{grid-template-columns:1fr}
+#list-body.col-2{grid-template-columns:1fr 1fr}
+#list-body.col-auto{grid-template-columns:1fr}
+
+/* list row */
+.list-row{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);overflow:hidden}
+.list-row-header{padding:10px 14px;display:flex;align-items:flex-start;gap:10px;cursor:pointer;transition:background .12s}
+.list-row-header:hover{background:var(--surface2)}
 .list-row-info{flex:1;min-width:0}
 .list-row-title{font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .list-row-meta{display:flex;gap:5px;align-items:center;margin-top:4px;flex-wrap:wrap}
+.list-row-chevron{font-size:12px;color:var(--muted);flex-shrink:0;transition:transform .2s;margin-top:2px}
+.list-row-chevron.open{transform:rotate(90deg)}
+.list-row-body{display:none;padding:0 14px 10px 14px;border-top:1px solid var(--border)}
+.list-row-body.open{display:block}
+.subtask-accordion{margin-top:8px;display:flex;flex-direction:column;gap:4px}
+.subtask-acc-item{display:flex;align-items:center;gap:8px;font-size:12px;padding:4px 0;border-bottom:1px solid var(--border)}
+.subtask-acc-item:last-child{border-bottom:none}
+.subtask-acc-cb{width:15px;height:15px;accent-color:var(--accent);cursor:pointer;flex-shrink:0}
+.subtask-acc-title{flex:1;color:var(--text2)}
+.subtask-acc-title.done{text-decoration:line-through;color:var(--muted)}
+.list-row-edit-btn{margin-top:8px;background:var(--accent);color:#fff;padding:4px 14px;font-size:12px}
 
-/* SYNC VIEW */
+/* ===== SYNC VIEW ===== */
 #sync-view{max-width:680px;margin:0 auto}
 .sync-section{background:var(--surface);border-radius:var(--r2);padding:16px;margin-bottom:14px;border:1px solid var(--border)}
 .sync-section h3{font-size:14px;font-weight:700;margin-bottom:12px;color:var(--text2)}
@@ -114,7 +129,17 @@ code{background:var(--surface2);padding:1px 5px;border-radius:4px;font-size:12px
 .sync-log{background:var(--surface2);border-radius:var(--r);padding:10px;font-family:monospace;font-size:11px;max-height:200px;overflow-y:auto;white-space:pre-wrap;border:1px solid var(--border2)}
 .log-ok{color:var(--success)}.log-err{color:var(--danger)}.log-info{color:var(--info)}
 
-/* MODAL */
+/* ===== SETTINGS VIEW ===== */
+#settings-view{max-width:580px;margin:0 auto}
+.settings-section{background:var(--surface);border-radius:var(--r2);padding:18px;margin-bottom:14px;border:1px solid var(--border)}
+.settings-section h3{font-size:14px;font-weight:700;margin-bottom:14px;color:var(--text2)}
+.setting-row{display:flex;align-items:center;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.setting-row label{font-size:13px;color:var(--text2);min-width:160px;flex-shrink:0}
+.setting-row select,.setting-row input{max-width:200px}
+.archive-stat{font-size:13px;color:var(--text2);margin-bottom:10px;line-height:1.7}
+.archive-stat span{color:var(--warn);font-weight:700}
+
+/* ===== MODAL ===== */
 #modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:100;align-items:center;justify-content:center}
 #modal-bg.open{display:flex}
 #modal{background:var(--surface);border-radius:var(--r2);width:min(620px,96vw);max-height:92vh;overflow-y:auto;padding:22px;box-shadow:var(--shadow);border:1px solid var(--border2)}
@@ -133,7 +158,16 @@ code{background:var(--surface2);padding:1px 5px;border-radius:4px;font-size:12px
 
 #toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--surface2);border:1px solid var(--border2);padding:9px 20px;border-radius:24px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .3s;z-index:200;white-space:nowrap;box-shadow:var(--shadow)}
 #toast.show{opacity:1}
-@media(max-width:640px){#kanban-board{flex-direction:column}.kb-col{max-width:100%}.mx-note{width:90px}}
+
+@media(max-width:640px){
+  #kanban-board{flex-direction:column}.kb-col{max-width:100%}
+  .mx-note{width:90px}
+  #list-body.col-auto{grid-template-columns:1fr}
+  #list-body.col-2{grid-template-columns:1fr}
+}
+@media(min-width:900px){
+  #list-body.col-auto{grid-template-columns:1fr 1fr}
+}
   </style>
 </head>
 <body>
@@ -145,18 +179,26 @@ code{background:var(--surface2);padding:1px 5px;border-radius:4px;font-size:12px
       <button class="nav-btn" onclick="switchView('b')">Matrix</button>
       <button class="nav-btn" onclick="switchView('c')">List</button>
       <button class="nav-btn" onclick="switchView('d')">Google</button>
+      <button class="nav-btn" onclick="switchView('e')">設定</button>
     </div>
     <button id="add-btn" onclick="openModal()">+ ToDo</button>
   </div>
+
   <div id="content">
+    <!-- KANBAN -->
     <div id="view-a" class="view active">
       <div id="kanban-board">
         <div class="kb-col"><div class="kb-header">未着手 <span class="kb-count" id="cnt-not_started">0</span></div><div class="kb-body" id="kb-not_started" data-prog="not_started" ondragover="onDragOver(event)" ondrop="onDrop(event)" ondragleave="onDragLeave(event)"></div></div>
         <div class="kb-col"><div class="kb-header">仕掛中 <span class="kb-count" id="cnt-in_progress">0</span></div><div class="kb-body" id="kb-in_progress" data-prog="in_progress" ondragover="onDragOver(event)" ondrop="onDrop(event)" ondragleave="onDragLeave(event)"></div></div>
         <div class="kb-col"><div class="kb-header">保留 <span class="kb-count" id="cnt-on_hold">0</span></div><div class="kb-body" id="kb-on_hold" data-prog="on_hold" ondragover="onDragOver(event)" ondrop="onDrop(event)" ondragleave="onDragLeave(event)"></div></div>
-        <div class="kb-col"><div class="kb-header">完了 <span class="kb-count" id="cnt-completed">0</span></div><div class="kb-body" id="kb-completed" data-prog="completed" ondragover="onDragOver(event)" ondrop="onDrop(event)" ondragleave="onDragLeave(event)"></div></div>
+        <div class="kb-col">
+          <div class="kb-header">完了 <span class="kb-count" id="cnt-completed">0</span></div>
+          <div class="kb-body" id="kb-completed" data-prog="completed" ondragover="onDragOver(event)" ondrop="onDrop(event)" ondragleave="onDragLeave(event)"></div>
+        </div>
       </div>
     </div>
+
+    <!-- MATRIX -->
     <div id="view-b" class="view">
       <div id="matrix-outer">
         <div id="matrix-x-label">← 緊急度 →</div>
@@ -174,6 +216,8 @@ code{background:var(--surface2);padding:1px 5px;border-radius:4px;font-size:12px
         </div>
       </div>
     </div>
+
+    <!-- LIST -->
     <div id="view-c" class="view">
       <div id="list-controls">
         <input type="text" id="list-search" placeholder="タイトル検索" oninput="renderList()">
@@ -182,8 +226,10 @@ code{background:var(--surface2);padding:1px 5px;border-radius:4px;font-size:12px
         <select id="list-sort" onchange="renderList()"><option value="createdAt_desc">登録日 新→旧</option><option value="createdAt_asc">登録日 旧→新</option><option value="deadline_asc">締切 近→遠</option><option value="importance_desc">重要度 高→低</option><option value="urgency_desc">緊急度 高→低</option></select>
         <span id="list-count" style="font-size:12px;color:var(--muted)"></span>
       </div>
-      <div id="list-body"></div>
+      <div id="list-body" class="col-auto"></div>
     </div>
+
+    <!-- GOOGLE SYNC -->
     <div id="view-d" class="view">
       <div id="sync-view">
         <div class="sync-section">
@@ -202,10 +248,43 @@ code{background:var(--surface2);padding:1px 5px;border-radius:4px;font-size:12px
           <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap;align-items:center">
             <button class="btn-primary" onclick="runSync()">双方向同期</button>
             <button class="btn-secondary" onclick="pushOnly()">↑ TaskFlow→Google</button>
-            <button class="btn-secondary" onclick="pullOnly()">↓ Google→TaskFlow（全リスト取込）</button>
+            <button class="btn-secondary" onclick="pullOnly()">↓ Google→TaskFlow</button>
             <span id="sync-status" style="font-size:11px;color:var(--muted)"></span>
           </div>
           <div id="sync-log" class="sync-log">同期ログがここに表示されます。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SETTINGS -->
+    <div id="view-e" class="view">
+      <div id="settings-view">
+        <div class="settings-section">
+          <h3>リスト表示</h3>
+          <div class="setting-row">
+            <label>カラム数</label>
+            <select id="s-list-cols" onchange="saveSettings()">
+              <option value="col-1">1カラム（常に）</option>
+              <option value="col-2">2カラム（常に）</option>
+              <option value="col-auto" selected>自動（画面幅で切替）</option>
+            </select>
+          </div>
+        </div>
+        <div class="settings-section">
+          <h3>アーカイブ（1年以上前に完了したToDo）</h3>
+          <div class="archive-stat" id="archive-stat">集計中...</div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn-secondary" onclick="exportArchivedCSV()">📥 CSVでエクスポート</button>
+            <button class="btn-danger" onclick="deleteArchived()">🗑 アーカイブを削除</button>
+          </div>
+          <p style="font-size:11px;color:var(--muted);margin-top:8px">※ アーカイブされたToDoはList以外の画面では非表示になります。削除は元に戻せません。</p>
+        </div>
+        <div class="settings-section">
+          <h3>データ管理</h3>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn-secondary" onclick="exportAllCSV()">📥 全ToDoをCSVでエクスポート</button>
+            <button class="btn-danger" onclick="clearAll()">⚠ 全データ削除</button>
+          </div>
         </div>
       </div>
     </div>
@@ -232,21 +311,39 @@ code{background:var(--surface2);padding:1px 5px;border-radius:4px;font-size:12px
 <div id="toast"></div>
 
 <script>
-const STORAGE_KEY='tf_v2',GSETTINGS_KEY='tf_gset',TASKS_BASE='https://tasks.googleapis.com/tasks/v1';
+const STORAGE_KEY='tf_v2',GSETTINGS_KEY='tf_gset',SETTINGSKEY='tf_settings',TASKS_BASE='https://tasks.googleapis.com/tasks/v1';
 const PROG_LABELS={not_started:'未着手',in_progress:'仕掛中',completed:'完了',on_hold:'保留'};
-const VIEWS=['a','b','c','d'];
-let S={todos:[],activeView:'a'},G={clientId:'',accounts:[]},gTokens={};
+const VIEWS=['a','b','c','d','e'];
+let S={todos:[],activeView:'a'},G={clientId:'',accounts:[]},CFG={listCols:'col-auto'},gTokens={};
 let editingId=null,impVal=0,urgVal=0,subtasksTemp=[],dragId=null;
 let mxPopupTimer=null,mxActiveTodoId=null;
+// track expanded list rows
+const expandedRows=new Set();
 
+/* ---- PERSISTENCE ---- */
 function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(S))}
 function saveG(){localStorage.setItem(GSETTINGS_KEY,JSON.stringify(G))}
+function saveSettings(){
+  const sel=document.getElementById('s-list-cols');
+  if(sel)CFG.listCols=sel.value;
+  localStorage.setItem(SETTINGSKEY,JSON.stringify(CFG));
+  applyListColClass();
+  toast('設定を保存しました');
+}
+function applyListColClass(){
+  const body=document.getElementById('list-body');
+  if(!body)return;
+  body.className=CFG.listCols||'col-auto';
+}
 function load(){
   try{S=JSON.parse(localStorage.getItem(STORAGE_KEY))||{todos:[],activeView:'a'}}catch(e){S={todos:[],activeView:'a'}}
   if(!Array.isArray(S.todos))S.todos=[];
   try{G=JSON.parse(localStorage.getItem(GSETTINGS_KEY))||{clientId:'',accounts:[]}}catch(e){G={clientId:'',accounts:[]}}
   if(!Array.isArray(G.accounts))G.accounts=[];
+  try{CFG=JSON.parse(localStorage.getItem(SETTINGSKEY))||{listCols:'col-auto'}}catch(e){CFG={listCols:'col-auto'}}
 }
+
+/* ---- UTILS ---- */
 function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 function toast(msg,dur=2500){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),dur)}
@@ -257,18 +354,29 @@ function isOverdue(t){if(!t.deadline||t.progress==='completed')return false;cons
 function quadrant(t){const imp=t.importance>=2,urg=t.urgency>=2;return imp&&urg?'q1':imp&&!urg?'q2':!imp&&urg?'q3':'q4'}
 function progTag(p){return`<span class="tag tag-prog-${p}">${PROG_LABELS[p]||p}</span>`}
 
-// Google同期アカウントバッジ
+/* ---- ARCHIVE LOGIC ---- */
+const ARCHIVE_MS=365*24*60*60*1000; // 1年
+function isArchived(t){
+  if(t.progress!=='completed')return false;
+  // completedAt があればそれを優先、なければcreatedAtで判定
+  const dateStr=t.completedAt||t.createdAt;
+  if(!dateStr)return false;
+  return(Date.now()-new Date(dateStr).getTime())>ARCHIVE_MS;
+}
+function activeForNonList(t){return!isArchived(t)}
+
+/* ---- BADGES ---- */
 function gSyncBadge(t){
   if(!t.gTaskIds)return '';
   const emails=Object.keys(t.gTaskIds);
   if(!emails.length)return '';
   return emails.map(e=>{
-    const short=e.length>16?e.substring(0,14)+'..':e;
+    const short=e.length>18?e.substring(0,16)+'..':e;
     return`<span class="tag tag-gsync" title="${esc(e)}">G: ${esc(short)}</span>`;
   }).join('');
 }
 
-// 通常カード（Kanban / List）
+/* ---- KANBAN CARD ---- */
 function makeCard(t,draggable=false){
   const imp='★'.repeat(t.importance)+'☆'.repeat(4-t.importance);
   const urg='!'.repeat(t.urgency)+'.'.repeat(4-t.urgency);
@@ -289,7 +397,7 @@ function makeCard(t,draggable=false){
   </div>`;
 }
 
-// 付箋カード（Matrix専用）
+/* ---- MATRIX STICKY ---- */
 const MX_NOTE_CLS={q1:'mx-note-q1',q2:'mx-note-q2',q3:'mx-note-q3',q4:'mx-note-q4'};
 function makeStickyNote(t,q){
   const dl=deadlineStr(t),over=isOverdue(t);
@@ -308,7 +416,7 @@ function makeStickyNote(t,q){
   </div>`;
 }
 
-// マトリックスポップアップ
+/* ---- MATRIX POPUP ---- */
 function buildPopupContent(t){
   const imp='★'.repeat(t.importance)+'☆'.repeat(4-t.importance);
   const urg='!'.repeat(t.urgency)+'.'.repeat(4-t.urgency);
@@ -318,58 +426,56 @@ function buildPopupContent(t){
   return`<div style="font-weight:700;font-size:13px;line-height:1.4;margin-bottom:8px">${esc(t.title)}</div>
     <div style="display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px">
       ${t.category?`<span class="tag tag-cat">${esc(t.category)}</span>`:''}
-      ${progTag(t.progress)}
-      <span class="stars star-imp" style="font-size:12px">${imp}</span>
-      <span class="stars star-urg" style="font-size:12px">${urg}</span>
+      ${progTag(t.progress)}<span class="stars star-imp" style="font-size:12px">${imp}</span><span class="stars star-urg" style="font-size:12px">${urg}</span>
     </div>
     ${dl?`<div class="card-dl${over?' overdue':''}" style="margin-bottom:5px">期限: ${esc(dl)}${over?' 期限切れ':''}</div>`:''}
     ${sub.length?`<div style="font-size:11px;color:var(--text2);margin-bottom:5px">${sub.map(s=>`<div>${s.done?'☑':'☐'} ${esc(s.title)}</div>`).join('')}</div>`:''}
     ${gEmails.length?`<div style="font-size:10px;color:var(--info);margin-bottom:8px">同期: ${gEmails.map(esc).join('<br>')}</div>`:''}
     <button class="btn-secondary btn-sm" onclick="hideMxPopupNow();openModal('${t.id}')" style="width:100%">編集する</button>`;
 }
-
 function showMxPopup(id,el){
-  clearTimeout(mxPopupTimer);
-  mxActiveTodoId=id;
-  const t=S.todos.find(x=>x.id===id);
-  if(!t)return;
+  clearTimeout(mxPopupTimer);mxActiveTodoId=id;
+  const t=S.todos.find(x=>x.id===id);if(!t)return;
   const popup=document.getElementById('mx-popup');
   popup.innerHTML=buildPopupContent(t);
-  const rect=el.getBoundingClientRect();
-  const pw=270,ph=220;
+  const rect=el.getBoundingClientRect(),pw=270,ph=220;
   let left=rect.right+8,top=rect.top;
   if(left+pw>window.innerWidth)left=rect.left-pw-8;
-  if(left<4)left=4;
-  if(top+ph>window.innerHeight)top=window.innerHeight-ph-8;
-  if(top<4)top=4;
-  popup.style.left=left+'px';popup.style.top=top+'px';
-  popup.classList.add('show');
+  if(left<4)left=4;if(top+ph>window.innerHeight)top=window.innerHeight-ph-8;if(top<4)top=4;
+  popup.style.left=left+'px';popup.style.top=top+'px';popup.classList.add('show');
 }
 function hideMxPopup(){mxPopupTimer=setTimeout(()=>{document.getElementById('mx-popup').classList.remove('show');mxActiveTodoId=null},200)}
 function keepMxPopup(){clearTimeout(mxPopupTimer)}
 function hideMxPopupNow(){clearTimeout(mxPopupTimer);document.getElementById('mx-popup').classList.remove('show');mxActiveTodoId=null}
-function onMxNoteTap(e,id,el){
-  e.stopPropagation();
-  if(mxActiveTodoId===id){hideMxPopupNow()}else{showMxPopup(id,el)}
-}
+function onMxNoteTap(e,id,el){e.stopPropagation();if(mxActiveTodoId===id){hideMxPopupNow()}else{showMxPopup(id,el)}}
 document.addEventListener('click',()=>hideMxPopupNow());
 
-// VIEW SWITCHING
+/* ---- VIEW SWITCHING ---- */
 function switchView(v){
   document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach((el,i)=>el.classList.toggle('active',VIEWS[i]===v));
   document.getElementById('view-'+v).classList.add('active');
   S.activeView=v;save();
-  if(v==='a')renderKanban();if(v==='b')renderMatrix();if(v==='c')renderList();if(v==='d')renderSync();
+  if(v==='a')renderKanban();if(v==='b')renderMatrix();if(v==='c')renderList();if(v==='d')renderSync();if(v==='e')renderSettings();
 }
 
-// KANBAN
+/* ---- KANBAN ---- */
 function renderKanban(){
   ['not_started','in_progress','on_hold','completed'].forEach(p=>{
     const body=document.getElementById('kb-'+p),cnt=document.getElementById('cnt-'+p);
-    const todos=S.todos.filter(t=>t.progress===p);
+    const todos=S.todos.filter(t=>t.progress===p&&activeForNonList(t));
     body.innerHTML=todos.map(t=>makeCard(t,true)).join('');
     if(cnt)cnt.textContent=todos.length;
+    // 完了列にアーカイブ件数を表示
+    if(p==='completed'){
+      const arCnt=S.todos.filter(t=>isArchived(t)).length;
+      if(arCnt>0){
+        const note=document.createElement('div');
+        note.className='kb-archived-note';
+        note.textContent=`+${arCnt}件 アーカイブ（Listで表示）`;
+        body.appendChild(note);
+      }
+    }
   });
 }
 function onDragStart(e,id){dragId=id;e.currentTarget.classList.add('dragging');e.dataTransfer.effectAllowed='move'}
@@ -379,14 +485,18 @@ function onDragLeave(e){e.currentTarget.classList.remove('drag-over')}
 function onDrop(e){
   e.preventDefault();e.currentTarget.classList.remove('drag-over');
   const prog=e.currentTarget.dataset.prog,todo=S.todos.find(t=>t.id===dragId);
-  if(todo&&todo.progress!==prog){todo.progress=prog;save();renderKanban();toast('進捗を更新しました')}
+  if(todo&&todo.progress!==prog){
+    // 完了にした場合は completedAt を記録
+    if(prog==='completed'&&todo.progress!=='completed')todo.completedAt=new Date().toISOString();
+    todo.progress=prog;save();renderKanban();toast('進捗を更新しました');
+  }
   dragId=null;
 }
 
-// MATRIX
+/* ---- MATRIX ---- */
 function renderMatrix(){
   const qs={q1:[],q2:[],q3:[],q4:[]};
-  S.todos.filter(t=>t.progress!=='completed').forEach(t=>qs[quadrant(t)].push(t));
+  S.todos.filter(t=>t.progress!=='completed'&&activeForNonList(t)).forEach(t=>qs[quadrant(t)].push(t));
   ['q1','q2','q3','q4'].forEach(q=>{
     const el=document.getElementById(q);
     const title=el.querySelector('.mx-q-title').outerHTML;
@@ -394,15 +504,17 @@ function renderMatrix(){
   });
 }
 
-// LIST
+/* ---- LIST ---- */
 function renderList(){
+  applyListColClass();
   const search=(document.getElementById('list-search')?.value||'').toLowerCase();
   const catFilter=document.getElementById('list-cat')?.value||'';
   const progFilter=document.getElementById('list-prog')?.value||'';
   const sort=document.getElementById('list-sort')?.value||'createdAt_desc';
+  // rebuild cat options
   const catSel=document.getElementById('list-cat');
   if(catSel){const cur=catSel.value;catSel.innerHTML='<option value="">全カテゴリ</option>'+categories().map(c=>`<option value="${esc(c)}"${c===cur?' selected':''}>${esc(c)}</option>`).join('');catSel.value=cur}
-  let todos=[...S.todos];
+  let todos=[...S.todos]; // LIST shows ALL including archived
   if(search)todos=todos.filter(t=>t.title.toLowerCase().includes(search)||(t.category||'').toLowerCase().includes(search));
   if(catFilter)todos=todos.filter(t=>t.category===catFilter);
   if(progFilter)todos=todos.filter(t=>t.progress===progFilter);
@@ -416,14 +528,128 @@ function renderList(){
   });
   const countEl=document.getElementById('list-count');if(countEl)countEl.textContent=todos.length+'件';
   const body=document.getElementById('list-body');if(!body)return;
-  body.innerHTML=todos.map(t=>{
-    const imp='★'.repeat(t.importance)+'☆'.repeat(4-t.importance),urg='!'.repeat(t.urgency)+'.'.repeat(4-t.urgency);
-    const dl=deadlineStr(t),over=isOverdue(t);
-    return`<div class="list-row" onclick="openModal('${t.id}')"><div class="list-row-info"><div class="list-row-title">${esc(t.title)}</div><div class="list-row-meta">${t.category?`<span class="tag tag-cat">${esc(t.category)}</span>`:''} ${progTag(t.progress)}<span class="stars star-imp">${imp}</span><span class="stars star-urg">${urg}</span>${gSyncBadge(t)}${dl?`<span class="card-dl${over?' overdue':''}">${esc(dl)}</span>`:''}</div></div></div>`;
-  }).join('');
+  body.innerHTML=todos.map(t=>buildListRow(t)).join('');
 }
 
-// SYNC VIEW
+function buildListRow(t){
+  const imp='★'.repeat(t.importance)+'☆'.repeat(4-t.importance);
+  const urg='!'.repeat(t.urgency)+'.'.repeat(4-t.urgency);
+  const dl=deadlineStr(t),over=isOverdue(t);
+  const sub=t.subtasks||[],hasSub=sub.length>0;
+  const archived=isArchived(t);
+  const isOpen=expandedRows.has(t.id);
+  const chevron=hasSub?`<span class="list-row-chevron${isOpen?' open':''}" id="chev-${t.id}">▶</span>`:'';
+  // subtask accordion body
+  let subBody='';
+  if(hasSub){
+    const items=sub.map((s,si)=>`<div class="subtask-acc-item">
+      <input type="checkbox" class="subtask-acc-cb" ${s.done?'checked':''} onchange="toggleSubtaskDone('${t.id}',${si},this)" onclick="event.stopPropagation()">
+      <span class="subtask-acc-title${s.done?' done':''}">${esc(s.title)}</span>
+    </div>`).join('');
+    subBody=`<div class="list-row-body${isOpen?' open':''}" id="subbody-${t.id}">
+      <div class="subtask-accordion">${items}</div>
+      <button class="list-row-edit-btn" onclick="event.stopPropagation();openModal('${t.id}')">編集する</button>
+    </div>`;
+  }
+  return`<div class="list-row${archived?' archived-row':''}">
+    <div class="list-row-header" onclick="onListRowClick('${t.id}',${hasSub})">
+      <div class="list-row-info">
+        <div class="list-row-title">${archived?'[アーカイブ] ':esc('')}${esc(t.title)}</div>
+        <div class="list-row-meta">
+          ${t.category?`<span class="tag tag-cat">${esc(t.category)}</span>`:''}
+          ${progTag(t.progress)}
+          <span class="stars star-imp">${imp}</span><span class="stars star-urg">${urg}</span>
+          ${gSyncBadge(t)}
+          ${hasSub?`<span class="tag" style="background:var(--surface2);color:var(--muted)">${sub.filter(s=>s.done).length}/${sub.length}</span>`:''}
+          ${dl?`<span class="card-dl${over?' overdue':''}">${esc(dl)}</span>`:''}
+        </div>
+      </div>
+      ${chevron}
+    </div>
+    ${subBody}
+  </div>`;
+}
+
+function onListRowClick(id,hasSub){
+  if(hasSub){
+    // toggle accordion
+    if(expandedRows.has(id)){expandedRows.delete(id)}else{expandedRows.add(id)}
+    // update DOM without full re-render for performance
+    const chev=document.getElementById('chev-'+id);
+    const body=document.getElementById('subbody-'+id);
+    const isOpen=expandedRows.has(id);
+    if(chev)chev.classList.toggle('open',isOpen);
+    if(body)body.classList.toggle('open',isOpen);
+  } else {
+    openModal(id);
+  }
+}
+
+function toggleSubtaskDone(todoId,subIdx,cb){
+  const t=S.todos.find(x=>x.id===todoId);
+  if(!t||!t.subtasks[subIdx])return;
+  t.subtasks[subIdx].done=cb.checked;
+  save();
+  // update title strike-through in place
+  const spans=document.querySelectorAll(`#subbody-${todoId} .subtask-acc-title`);
+  if(spans[subIdx])spans[subIdx].className='subtask-acc-title'+(cb.checked?' done':'');
+}
+
+/* ---- SETTINGS RENDER ---- */
+function renderSettings(){
+  const sel=document.getElementById('s-list-cols');
+  if(sel)sel.value=CFG.listCols||'col-auto';
+  updateArchiveStat();
+}
+function updateArchiveStat(){
+  const el=document.getElementById('archive-stat');if(!el)return;
+  const cnt=S.todos.filter(t=>isArchived(t)).length;
+  el.innerHTML=`アーカイブ対象（完了から1年以上）: <span>${cnt}件</span>`;
+}
+
+/* ---- CSV EXPORT ---- */
+function todoCsvRow(t){
+  const sub=(t.subtasks||[]).map(s=>(s.done?'[✓]':'[ ]')+s.title).join('|');
+  const gAccts=t.gTaskIds?Object.keys(t.gTaskIds).join('|'):'';
+  return [
+    t.id,t.title,t.category||'',t.progress,t.importance,t.urgency,
+    t.deadline||'',t.deadlineTime||'',t.createdAt||'',t.completedAt||'',
+    sub,gAccts
+  ].map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',');
+}
+const CSV_HEADER='"id","title","category","progress","importance","urgency","deadline","deadlineTime","createdAt","completedAt","subtasks","gAccounts"';
+function downloadCSV(rows,filename){
+  const blob=new Blob(['﻿'+CSV_HEADER+'\n'+rows.join('\n')],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob),a=document.createElement('a');
+  a.href=url;a.download=filename;a.click();URL.revokeObjectURL(url);
+}
+function exportArchivedCSV(){
+  const rows=S.todos.filter(t=>isArchived(t)).map(todoCsvRow);
+  if(!rows.length){toast('アーカイブ対象がありません');return}
+  const d=new Date().toISOString().slice(0,10).replace(/-/g,'');
+  downloadCSV(rows,`taskflow_archive_${d}.csv`);
+  toast(`${rows.length}件をCSVに出力しました`);
+}
+function exportAllCSV(){
+  const rows=S.todos.map(todoCsvRow);
+  if(!rows.length){toast('ToDoがありません');return}
+  const d=new Date().toISOString().slice(0,10).replace(/-/g,'');
+  downloadCSV(rows,`taskflow_all_${d}.csv`);
+  toast(`${rows.length}件をCSVに出力しました`);
+}
+function deleteArchived(){
+  const cnt=S.todos.filter(t=>isArchived(t)).length;
+  if(!cnt){toast('アーカイブ対象がありません');return}
+  if(!confirm(`アーカイブされた${cnt}件を完全に削除しますか？この操作は元に戻せません。`))return;
+  S.todos=S.todos.filter(t=>!isArchived(t));
+  save();updateArchiveStat();toast(`${cnt}件を削除しました`);
+}
+function clearAll(){
+  if(!confirm('全てのToDoを削除しますか？この操作は元に戻せません。'))return;
+  S.todos=[];save();renderAll();toast('全データを削除しました');
+}
+
+/* ---- SYNC VIEW ---- */
 function renderSync(){const cidEl=document.getElementById('g-client-id');if(cidEl)cidEl.value=G.clientId||'';renderAccList()}
 function renderAccList(){
   const el=document.getElementById('acc-list');if(!el)return;
@@ -438,7 +664,7 @@ function addAccount(){const email=prompt('Googleアカウントのメールア�
 function removeAccount(i){if(!confirm(G.accounts[i].email+' を削除しますか？'))return;delete gTokens[G.accounts[i].email];G.accounts.splice(i,1);saveG();renderAccList()}
 function editAccountCats(i){const acc=G.accounts[i];const cur=(acc.categories||[]).join(', ');const input=prompt(acc.email+' のカテゴリ（カンマ区切り、空欄で全て）:',cur);if(input===null)return;acc.categories=input.split(',').map(s=>s.trim()).filter(Boolean);saveG();renderAccList()}
 
-// GOOGLE OAUTH
+/* ---- GOOGLE OAUTH ---- */
 function authAccount(i){
   const acc=G.accounts[i];
   if(!G.clientId){toast('先にクライアントIDを設定して保存してください');return}
@@ -447,7 +673,7 @@ function authAccount(i){
   client.requestAccessToken({prompt:'select_account'});
 }
 
-// GOOGLE TASKS API
+/* ---- GOOGLE TASKS API ---- */
 async function gApi(email,method,path,body=null){
   const tok=gTokens[email];
   if(!tok||tok.expiry<=Date.now())throw new Error(email+' のトークンが無効です。再認証してください。');
@@ -473,7 +699,7 @@ async function fetchAllTasks(email,listId){
 function encodeNotes(todo){return'[TaskFlow] id='+todo.id+' cat='+encodeURIComponent(todo.category||'')+' imp='+todo.importance+' urg='+todo.urgency+' prog='+todo.progress}
 function decodeNotes(notes){if(!notes||!notes.includes('[TaskFlow]'))return null;const m={};notes.replace(/(\w+)=(\S+)/g,(_,k,v)=>{m[k]=v});if(!m.id)return null;return{id:m.id,category:decodeURIComponent(m.cat||''),importance:+(m.imp||0),urgency:+(m.urg||0),progress:m.prog||'not_started'}}
 function todoToGTask(todo){const task={title:todo.title,notes:encodeNotes(todo),status:todo.progress==='completed'?'completed':'needsAction'};if(todo.deadline)task.due=todo.deadline+'T00:00:00.000Z';return task}
-function gtaskToNewTodo(gt,email,catHint){return{id:uid(),title:gt.title||'(タイトルなし)',category:catHint||'',createdAt:gt.updated||new Date().toISOString(),deadline:gt.due?gt.due.substring(0,10):null,deadlineTime:null,importance:0,urgency:0,progress:gt.status==='completed'?'completed':'not_started',subtasks:[],gTaskIds:{[email]:gt.id}}}
+function gtaskToNewTodo(gt,email,catHint){return{id:uid(),title:gt.title||'(タイトルなし)',category:catHint||'',createdAt:gt.updated||new Date().toISOString(),deadline:gt.due?gt.due.substring(0,10):null,deadlineTime:null,importance:0,urgency:0,progress:gt.status==='completed'?'completed':'not_started',completedAt:gt.status==='completed'?(gt.completed||gt.updated||null):null,subtasks:[],gTaskIds:{[email]:gt.id}}}
 
 async function importFromAllLists(email,taskFlowListId,trackedGIds){
   let imported=0;
@@ -497,7 +723,6 @@ async function importFromAllLists(email,taskFlowListId,trackedGIds){
   }catch(e){logSync('  全リスト取得エラー: '+e.message,'log-err')}
   return imported;
 }
-
 function getAuthedAccounts(){return G.accounts.filter(a=>gTokens[a.email]&&gTokens[a.email].expiry>Date.now())}
 function todosForAccount(acc){if(!acc.categories||!acc.categories.length)return S.todos;return S.todos.filter(t=>acc.categories.includes(t.category))}
 
@@ -515,8 +740,7 @@ async function runSync(){
       const gByMetaId={};for(const gt of gTasks0){const m=decodeNotes(gt.notes);if(m)gByMetaId[m.id]=gt.id}
       for(const todo of todosForAccount(acc)){
         try{
-          const gTask=todoToGTask(todo);
-          const existingGId=(todo.gTaskIds&&todo.gTaskIds[acc.email])||gByMetaId[todo.id];
+          const gTask=todoToGTask(todo),existingGId=(todo.gTaskIds&&todo.gTaskIds[acc.email])||gByMetaId[todo.id];
           if(existingGId){await gApi(acc.email,'PATCH','/lists/'+listId+'/tasks/'+existingGId,gTask);if(!todo.gTaskIds)todo.gTaskIds={};todo.gTaskIds[acc.email]=existingGId}
           else{const c=await gApi(acc.email,'POST','/lists/'+listId+'/tasks',gTask);if(!todo.gTaskIds)todo.gTaskIds={};todo.gTaskIds[acc.email]=c.id}
           pushed++;
@@ -528,7 +752,7 @@ async function runSync(){
       S.todos.forEach(t=>{if(t.gTaskIds&&t.gTaskIds[acc.email])trackedGIds.add(t.gTaskIds[acc.email])});
       for(const gt of freshTasks){
         const meta=decodeNotes(gt.notes);
-        if(meta){const local=S.todos.find(t=>t.id===meta.id);if(local){if(gt.status==='completed'&&local.progress!=='completed'){local.progress='completed';pulled++}if(!local.gTaskIds)local.gTaskIds={};local.gTaskIds[acc.email]=gt.id;trackedGIds.add(gt.id)}}
+        if(meta){const local=S.todos.find(t=>t.id===meta.id);if(local){if(gt.status==='completed'&&local.progress!=='completed'){local.progress='completed';if(!local.completedAt)local.completedAt=gt.completed||new Date().toISOString();pulled++}if(!local.gTaskIds)local.gTaskIds={};local.gTaskIds[acc.email]=gt.id;trackedGIds.add(gt.id)}}
         else if(!trackedGIds.has(gt.id)){S.todos.push(gtaskToNewTodo(gt,acc.email,''));trackedGIds.add(gt.id);imported++;logSync('  取込 [TaskFlow]: "'+gt.title+'"')}
       }
       logSync('['+acc.email+'] 他のリストを確認中...');
@@ -581,7 +805,7 @@ async function pullOnly(){
       const freshTasks=await fetchAllTasks(acc.email,listId);
       for(const gt of freshTasks){
         const meta=decodeNotes(gt.notes);
-        if(meta){const local=S.todos.find(t=>t.id===meta.id);if(local){if(gt.status==='completed'&&local.progress!=='completed'){local.progress='completed';pulled++}if(!local.gTaskIds)local.gTaskIds={};local.gTaskIds[acc.email]=gt.id;trackedGIds.add(gt.id)}}
+        if(meta){const local=S.todos.find(t=>t.id===meta.id);if(local){if(gt.status==='completed'&&local.progress!=='completed'){local.progress='completed';if(!local.completedAt)local.completedAt=gt.completed||new Date().toISOString();pulled++}if(!local.gTaskIds)local.gTaskIds={};local.gTaskIds[acc.email]=gt.id;trackedGIds.add(gt.id)}}
         else if(!trackedGIds.has(gt.id)){S.todos.push(gtaskToNewTodo(gt,acc.email,''));trackedGIds.add(gt.id);imported++;logSync('  取込 [TaskFlow]: "'+gt.title+'"')}
       }
       const imp2=await importFromAllLists(acc.email,listId,trackedGIds);
@@ -593,7 +817,7 @@ async function pullOnly(){
   renderAll();
 }
 
-// MODAL
+/* ---- MODAL ---- */
 function openModal(id=null){
   editingId=id;const t=id?S.todos.find(x=>x.id===id):null;
   document.getElementById('modal-title').textContent=t?'ToDo 編集':'ToDo 追加';
@@ -631,6 +855,7 @@ function updateStars(){
 function updateSubtaskDOM(){document.getElementById('subtask-list').innerHTML=subtasksTemp.map((s,i)=>`<div class="subtask-item"><input type="checkbox" ${s.done?'checked':''} onchange="subtasksTemp[${i}].done=this.checked" style="width:auto;cursor:pointer"><input type="text" value="${esc(s.title)}" oninput="subtasksTemp[${i}].title=this.value" placeholder="サブタスク"><button class="btn-danger" onclick="removeSubtask(${i})">x</button></div>`).join('')}
 function addSubtask(){subtasksTemp.push({id:uid(),title:'',done:false});updateSubtaskDOM();const ins=document.querySelectorAll('#subtask-list input[type=text]');if(ins.length)ins[ins.length-1].focus()}
 function removeSubtask(i){subtasksTemp.splice(i,1);updateSubtaskDOM()}
+
 function saveTodo(){
   const title=document.getElementById('f-title').value.trim();
   if(!title){toast('タイトルを入力してください');document.getElementById('f-title').focus();return}
@@ -639,13 +864,35 @@ function saveTodo(){
   const hasDl=document.getElementById('f-dl-check').checked;
   const dlDate=hasDl?document.getElementById('f-dl-date').value||null:null;
   const dlTime=hasDl?document.getElementById('f-dl-time').value||null:null;
+  const prog=document.getElementById('f-prog').value;
   const subtasks=subtasksTemp.filter(s=>s.title.trim()).map(s=>({...s,title:s.title.trim()}));
-  if(editingId){const t=S.todos.find(x=>x.id===editingId);if(t)Object.assign(t,{title,category:cat,deadline:dlDate,deadlineTime:dlTime,importance:impVal,urgency:urgVal,progress:document.getElementById('f-prog').value,subtasks})}
-  else S.todos.push({id:uid(),title,category:cat,createdAt:new Date().toISOString(),deadline:dlDate,deadlineTime:dlTime,importance:impVal,urgency:urgVal,progress:document.getElementById('f-prog').value,subtasks,gTaskIds:null});
+  if(editingId){
+    const t=S.todos.find(x=>x.id===editingId);
+    if(t){
+      // completedAt の更新
+      if(prog==='completed'&&t.progress!=='completed')t.completedAt=new Date().toISOString();
+      if(prog!=='completed')t.completedAt=null;
+      Object.assign(t,{title,category:cat,deadline:dlDate,deadlineTime:dlTime,importance:impVal,urgency:urgVal,progress:prog,subtasks});
+    }
+  } else {
+    const now=new Date().toISOString();
+    S.todos.push({id:uid(),title,category:cat,createdAt:now,deadline:dlDate,deadlineTime:dlTime,importance:impVal,urgency:urgVal,progress:prog,subtasks,gTaskIds:null,completedAt:prog==='completed'?now:null});
+  }
   save();closeModal();renderAll();toast(editingId?'更新しました':'追加しました');
 }
-function deleteCurrent(){if(!editingId)return;const t=S.todos.find(x=>x.id===editingId);if(!confirm((t?t.title:'')+' を削除しますか？'))return;S.todos=S.todos.filter(t=>t.id!==editingId);save();closeModal();renderAll();toast('削除しました')}
-function renderAll(){const v=S.activeView||'a';if(v==='a')renderKanban();if(v==='b')renderMatrix();if(v==='c')renderList();if(v==='d')renderSync()}
+
+function deleteCurrent(){
+  if(!editingId)return;
+  const t=S.todos.find(x=>x.id===editingId);
+  if(!confirm((t?t.title:'')+' を削除しますか？'))return;
+  S.todos=S.todos.filter(t=>t.id!==editingId);
+  save();closeModal();renderAll();toast('削除しました');
+}
+
+function renderAll(){
+  const v=S.activeView||'a';
+  if(v==='a')renderKanban();if(v==='b')renderMatrix();if(v==='c')renderList();if(v==='d')renderSync();if(v==='e')renderSettings();
+}
 
 load();
 switchView(S.activeView||'a');
