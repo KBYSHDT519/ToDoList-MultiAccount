@@ -1252,7 +1252,7 @@ function activityHeatmap(createdByDay,completedByDay){
 
 function impUrgHeatmap(todos){
   var grid=[];for(var i=0;i<5;i++){grid.push([0,0,0,0,0])}
-  todos.filter(function(t){return t.progress!=='completed'}).forEach(function(t){grid[t.importance][t.urgency]++});
+  todos.filter(function(t){return t.progress!=='completed'}).forEach(function(t){var imp=+(t.importance)||0,urg=+(t.urgency)||0;if(imp>=0&&imp<=4&&urg>=0&&urg<=4)grid[imp][urg]++;});
   var maxV=Math.max.apply(null,[].concat.apply([],grid).concat([1]));
   var CELL=36,GAP=3,LBL=22;
   var W=LBL+(CELL+GAP)*5,H=LBL+(CELL+GAP)*5+12;
@@ -1324,14 +1324,14 @@ function renderStats(){
   var c1=document.createElement('div');c1.className='chart-card';
   c1.innerHTML='<div class="chart-title">進捗の内訳</div>';
   c1.appendChild(donutChart(progData));
-  c1.innerHTML+='<div class="chart-legend">'+progLegend+'</div>';
+  c1.insertAdjacentHTML('beforeend','<div class="chart-legend">'+progLegend+'</div>');
   row1.appendChild(c1);
 
   var c2=document.createElement('div');c2.className='chart-card';
   c2.innerHTML='<div class="chart-title">カテゴリ別タスク数（上位10件）</div>';
   var catSvg=stackedHBars(catRows);
-  if(typeof catSvg==='string')c2.innerHTML+=catSvg;else c2.appendChild(catSvg);
-  c2.innerHTML+='<div class="chart-legend">'+progLegend+'</div>';
+  if(typeof catSvg==='string')c2.insertAdjacentHTML('beforeend',catSvg);else c2.appendChild(catSvg);
+  c2.insertAdjacentHTML('beforeend','<div class="chart-legend">'+progLegend+'</div>');
   row1.appendChild(c2);
 
   // Account bars + Deadline perf
@@ -1365,39 +1365,49 @@ function renderStats(){
   var c3=document.createElement('div');c3.className='chart-card';
   c3.innerHTML='<div class="chart-title">同期アカウント別タスク数</div>';
   var accSvg=stackedHBars(accRows);
-  if(typeof accSvg==='string')c3.innerHTML+=accSvg;else c3.appendChild(accSvg);
-  c3.innerHTML+='<div class="chart-legend">'+progLegend+'</div>';
+  if(typeof accSvg==='string')c3.insertAdjacentHTML('beforeend',accSvg);else c3.appendChild(accSvg);
+  c3.insertAdjacentHTML('beforeend','<div class="chart-legend">'+progLegend+'</div>');
   row2.appendChild(c3);
 
   var c4=document.createElement('div');c4.className='chart-card';
   c4.innerHTML='<div class="chart-title">締切の達成状況</div>';
   c4.appendChild(donutChart(dlData,90,90,62,22));
-  c4.innerHTML+='<div class="chart-legend">'+dlData.map(function(d){return '<div class="legend-item"><div class="legend-dot" style="background:'+d.c+'"></div>'+d.l+'</div>'}).join('')+'</div>';
+  c4.insertAdjacentHTML('beforeend','<div class="chart-legend">'+dlData.map(function(d){return '<div class="legend-item"><div class="legend-dot" style="background:'+d.c+'"></div>'+d.l+'</div>'}).join('')+'</div>');
   row2.appendChild(c4);
 
   // Heatmap
+  try{
   var createdByDay={},completedByDay={};
   var DAY_MS=86400000,cutoff=new Date(Date.now()-365*DAY_MS);
   todos.forEach(function(t){
-    if(t.createdAt){var d=t.createdAt.slice(0,10);if(new Date(d)>=cutoff)createdByDay[d]=(createdByDay[d]||0)+1}
-    if(t.completedAt){var d=t.completedAt.slice(0,10);if(new Date(d)>=cutoff)completedByDay[d]=(completedByDay[d]||0)+1}
+    if(t.createdAt&&typeof t.createdAt==='string'){var dc=t.createdAt.slice(0,10);if(new Date(dc)>=cutoff)createdByDay[dc]=(createdByDay[dc]||0)+1}
+    if(t.completedAt&&typeof t.completedAt==='string'){var dcp=t.completedAt.slice(0,10);if(new Date(dcp)>=cutoff)completedByDay[dcp]=(completedByDay[dcp]||0)+1}
   });
   var hmCard=document.getElementById('chart-heatmap');
-  hmCard.innerHTML='<div class="chart-title">年間アクティビティ（過去365日 / 作成＋完了）</div><div class="hmap-wrap" id="hmap-inner"></div><div class="chart-legend" style="margin-top:8px"><div class="legend-item"><div class="legend-dot" style="background:#6ee7b7"></div>1件</div><div class="legend-item"><div class="legend-dot" style="background:#34d399"></div>2-3件</div><div class="legend-item"><div class="legend-dot" style="background:#10b981"></div>4-5件</div><div class="legend-item"><div class="legend-dot" style="background:#059669"></div>6件以上</div></div>';
-  document.getElementById('hmap-inner').appendChild(activityHeatmap(createdByDay,completedByDay));
+  if(hmCard){
+    hmCard.innerHTML='<div class="chart-title">年間アクティビティ（過去365日 / 作成＋完了）</div><div class="hmap-wrap" id="hmap-inner"></div><div class="chart-legend" style="margin-top:8px"><div class="legend-item"><div class="legend-dot" style="background:#6ee7b7"></div>1件</div><div class="legend-item"><div class="legend-dot" style="background:#34d399"></div>2-3件</div><div class="legend-item"><div class="legend-dot" style="background:#10b981"></div>4-5件</div><div class="legend-item"><div class="legend-dot" style="background:#059669"></div>6件以上</div></div>';
+    var hmInner=document.getElementById('hmap-inner');
+    if(hmInner)hmInner.appendChild(activityHeatmap(createdByDay,completedByDay));
+  }
+  }catch(e){console.error('heatmap error',e);var hmCard2=document.getElementById('chart-heatmap');if(hmCard2)hmCard2.innerHTML='<div class="chart-title">年間アクティビティ</div><div class="no-data">レンダリングエラー: '+e.message+'</div>';}
 
   // Monthly trend
+  try{
   var months=[],s1=[],s2=[];
-  for(var m=11;m>=0;m--){
-    var d=new Date();d.setDate(1);d.setMonth(d.getMonth()-m);
-    var key=d.toISOString().slice(0,7);
-    months.push((d.getMonth()+1)+'月');
-    s1.push(todos.filter(function(t){return t.createdAt&&t.createdAt.startsWith(key)}).length);
-    s2.push(todos.filter(function(t){return t.completedAt&&t.completedAt.startsWith(key)}).length);
+  for(var mi=11;mi>=0;mi--){
+    var md=new Date();md.setDate(1);md.setMonth(md.getMonth()-mi);
+    var key=md.toISOString().slice(0,7);
+    months.push((md.getMonth()+1)+'月');
+    s1.push(todos.filter(function(t){return t.createdAt&&typeof t.createdAt==='string'&&t.createdAt.startsWith(key)}).length);
+    s2.push(todos.filter(function(t){return t.completedAt&&typeof t.completedAt==='string'&&t.completedAt.startsWith(key)}).length);
   }
   var mCard=document.getElementById('chart-monthly');
-  mCard.innerHTML='<div class="chart-title">月次トレンド（過去12ヶ月）</div><div class="month-bar-wrap" id="monthly-inner"></div><div class="chart-legend"><div class="legend-item"><div class="legend-dot" style="background:#6366f1"></div>作成</div><div class="legend-item"><div class="legend-dot" style="background:#10b981"></div>完了</div></div>';
-  document.getElementById('monthly-inner').appendChild(dualBarChart(months,s1,s2));
+  if(mCard){
+    mCard.innerHTML='<div class="chart-title">月次トレンド（過去12ヶ月）</div><div class="month-bar-wrap" id="monthly-inner"></div><div class="chart-legend"><div class="legend-item"><div class="legend-dot" style="background:#6366f1"></div>作成</div><div class="legend-item"><div class="legend-dot" style="background:#10b981"></div>完了</div></div>';
+    var mInner=document.getElementById('monthly-inner');
+    if(mInner)mInner.appendChild(dualBarChart(months,s1,s2));
+  }
+  }catch(e){console.error('monthly error',e);var mCard2=document.getElementById('chart-monthly');if(mCard2)mCard2.innerHTML='<div class="chart-title">月次トレンド</div><div class="no-data">レンダリングエラー: '+e.message+'</div>';}
 
   // Row3: ImpUrg heatmap + importance rate + urgency rate
   var row3=document.getElementById('charts-row3');row3.innerHTML='';
@@ -1405,7 +1415,7 @@ function renderStats(){
   var c5=document.createElement('div');c5.className='chart-card';
   c5.innerHTML='<div class="chart-title">重要度×緊急度 分布（未完了）</div>';
   c5.appendChild(impUrgHeatmap(todos));
-  c5.innerHTML+='<div style="font-size:10px;color:var(--muted);margin-top:6px;text-align:center">縦: 重要度(★) / 横: 緊急度(!)</div>';
+  c5.insertAdjacentHTML('beforeend','<div style="font-size:10px;color:var(--muted);margin-top:6px;text-align:center">縦: 重要度(★) / 横: 緊急度(!)</div>');
   row3.appendChild(c5);
 
   var c6=document.createElement('div');c6.className='chart-card';
