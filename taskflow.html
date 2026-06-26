@@ -1496,13 +1496,63 @@ function authAccountAsync(i){
     client.requestAccessToken({prompt:'select_account'});
   });
 }
-async function reAuthSelected(){
+function reAuthSelected(){
   var idxs=getCheckedIndices();
   if(!idxs.length){toast('アカウントを選択してください');return}
-  for(var i=0;i<idxs.length;i++){await authAccountAsync(idxs[i])}
+  startStepAuth(idxs);
 }
-async function reAuthAll(){
-  for(var i=0;i<G.accounts.length;i++){await authAccountAsync(i)}
+function reAuthAll(){
+  var idxs=G.accounts.map(function(_,i){return i});
+  startStepAuth(idxs);
+}
+// ステップ式認証モーダル
+function startStepAuth(indices){
+  if(!indices.length)return;
+  var step=0;
+  function showStep(){
+    if(step>=indices.length){
+      closeStepModal();
+      toast('全アカウントの認証が完了しました');
+      renderAccList();
+      return;
+    }
+    var idx=indices[step];
+    var acc=G.accounts[idx];
+    var total=indices.length;
+    var el=document.getElementById('step-auth-modal');
+    if(!el){
+      el=document.createElement('div');
+      el.id='step-auth-modal';
+      el.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:9999';
+      document.body.appendChild(el);
+    }
+    el.innerHTML='<div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:28px 32px;max-width:420px;width:90%;text-align:center">'+
+      '<div style="font-size:13px;color:var(--muted);margin-bottom:8px">'+(step+1)+' / '+total+' アカウント</div>'+
+      '<div style="font-size:16px;font-weight:700;margin-bottom:6px;word-break:break-all">'+acc.email+'</div>'+
+      '<div style="font-size:12px;color:var(--muted);margin-bottom:20px">下のボタンをクリックしてGoogleアカウントを認証してください</div>'+
+      '<button id="step-auth-btn" class="btn-primary" style="width:100%;padding:10px;font-size:14px">🔑 このアカウントを認証</button>'+
+      '<div style="margin-top:12px"><button onclick="closeStepModal()" style="background:none;border:none;color:var(--muted);font-size:12px;cursor:pointer">キャンセル</button></div>'+
+    '</div>';
+    document.getElementById('step-auth-btn').onclick=function(){
+      this.disabled=true;this.textContent='認証中...';
+      var client=google.accounts.oauth2.initTokenClient({
+        client_id:G.clientId,
+        scope:'https://www.googleapis.com/auth/tasks',
+        hint:acc.email,
+        callback:function(resp){
+          if(resp.error){toast('認証失敗('+acc.email+'): '+resp.error)}
+          else{gTokens[acc.email]={token:resp.access_token,expiry:Date.now()+(resp.expires_in*1000)-60000};toast(acc.email+' 認証成功')}
+          step++;showStep();
+        }
+      });
+      client.requestAccessToken({prompt:'select_account'});
+    };
+  }
+  showStep();
+}
+function closeStepModal(){
+  var el=document.getElementById('step-auth-modal');
+  if(el)el.remove();
 }
 
 /* ===== DUPLICATE CHECKER ===== */
