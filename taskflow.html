@@ -8,7 +8,7 @@
   <style>
 :root{--bg:#111827;--surface:#1f2937;--surface2:#374151;--surface3:#4b5563;--accent:#6366f1;--accent2:#8b5cf6;--text:#f9fafb;--text2:#d1d5db;--muted:#9ca3af;--border:#374151;--border2:#4b5563;--success:#10b981;--warn:#f59e0b;--danger:#ef4444;--info:#3b82f6;--r:8px;--r2:12px;--shadow:0 4px 24px rgba(0,0,0,.6)}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0f1a;color:var(--text);min-height:100vh;overflow-x:hidden}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0f1a;color:var(--text);overflow:hidden;height:100vh}
 button{cursor:pointer;border:none;border-radius:var(--r);padding:6px 14px;font-size:13px;font-weight:500;transition:opacity .15s}
 button:hover{opacity:.82}
 input,select,textarea{background:var(--surface2);border:1px solid var(--border2);border-radius:var(--r);color:var(--text);font-size:13px;padding:6px 10px;outline:none;width:100%}
@@ -18,7 +18,7 @@ code{background:var(--surface2);padding:1px 5px;border-radius:4px;font-size:12px
 textarea{resize:vertical;min-height:60px;line-height:1.5}
 
 /* ===== APP LAYOUT ===== */
-#app{display:flex;flex-direction:column;width:var(--win-w,100vw);min-height:var(--win-h,100vh);height:var(--win-h,100vh);margin:0 auto;position:relative}
+#app{display:flex;flex-direction:column;width:var(--win-w,100vw);height:100vh;margin:0 auto;position:relative}
 #header{background:var(--surface);border-bottom:1px solid var(--border);padding:8px 12px;display:flex;align-items:center;gap:8px;flex-shrink:0;flex-wrap:wrap}
 #header h1{font-size:18px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap;flex-shrink:0}
 #nav{display:flex;gap:3px;flex:1;justify-content:center;flex-wrap:wrap}
@@ -54,8 +54,8 @@ textarea{resize:vertical;min-height:60px;line-height:1.5}
 
 /* ===== KANBAN ===== */
 #view-a{padding:0}
-#kanban-board{display:flex;height:100%;overflow-x:auto;padding:14px;gap:10px}
-.kb-col{background:var(--surface);border-radius:var(--r2);flex:1;min-width:190px;max-width:320px;display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--border)}
+#kanban-board{display:flex;height:100%;overflow-x:auto;overflow-y:hidden;padding:14px;gap:10px;align-items:stretch}
+.kb-col{background:var(--surface);border-radius:var(--r2);flex:1;min-width:190px;max-width:320px;display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--border);height:100%}
 .kb-header{padding:10px 12px;font-weight:700;font-size:13px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
 .kb-count{background:var(--surface2);border-radius:12px;padding:1px 8px;font-size:11px;color:var(--muted)}
 .kb-body{flex:1;overflow-y:auto;padding:8px;display:flex;flex-direction:column;gap:6px;min-height:80px}
@@ -64,14 +64,20 @@ textarea{resize:vertical;min-height:60px;line-height:1.5}
 .kb-archived-note{font-size:11px;color:var(--muted);text-align:center;padding:6px 0;border-top:1px solid var(--border);margin-top:4px}
 
 /* ===== MATRIX ===== */
-#view-b{padding:10px}
-#matrix-outer{display:flex;flex-direction:column;height:100%;min-height:500px}
+#view-b{padding:0}
+#matrix-outer{display:flex;flex-direction:column;height:100%;padding:8px 12px;gap:6px}
 #matrix-x-label{text-align:center;font-size:12px;color:var(--muted);padding:4px 0}
 #matrix-body{display:flex;flex:1;gap:6px;overflow:hidden}
 #matrix-y-label{display:flex;align-items:center;justify-content:center;writing-mode:vertical-rl;transform:rotate(180deg);font-size:12px;color:var(--muted);padding:0 4px;flex-shrink:0}
 #matrix-grid{display:grid;grid-template-columns:auto 1fr 1fr;grid-template-rows:auto 1fr 1fr;gap:6px;flex:1;overflow:hidden}
 .mx-col-lbl{text-align:center;font-size:11px;color:var(--muted);padding:2px}
 .mx-row-lbl{display:flex;align-items:center;font-size:11px;color:var(--muted);writing-mode:vertical-rl;transform:rotate(180deg);justify-content:center;padding:0 2px}
+/* Matrix 4分割レイアウト */
+#matrix-outer{display:flex;flex-direction:column;height:100%;padding:8px 12px;gap:6px}
+#matrix-x-label{display:flex;align-items:center;justify-content:center;gap:6px;font-size:12px;color:var(--muted);flex-shrink:0}
+#matrix-body{flex:1;display:flex;gap:6px;overflow:hidden}
+#matrix-y-label{writing-mode:vertical-rl;text-orientation:mixed;text-align:center;font-size:12px;color:var(--muted);flex-shrink:0;padding:0 2px}
+#matrix-grid{flex:1;display:grid;grid-template-columns:auto 1fr 1fr;grid-template-rows:auto 1fr 1fr;gap:6px;overflow:hidden}
 .mx-q{background:var(--surface);border-radius:var(--r);padding:8px;border:1px solid var(--border);display:flex;flex-direction:row;flex-wrap:wrap;align-content:flex-start;gap:6px;overflow-y:auto}
 .mx-q-title{font-size:11px;font-weight:700;padding-bottom:5px;border-bottom:1px solid var(--border);width:100%;flex-shrink:0;margin-bottom:2px}
 #q1{border-top:3px solid var(--danger)}#q2{border-top:3px solid var(--warn)}#q3{border-top:3px solid var(--info)}#q4{border-top:3px solid var(--muted)}
@@ -255,7 +261,7 @@ textarea{resize:vertical;min-height:60px;line-height:1.5}
 
   <div id="content">
     <!-- KANBAN -->
-    <div id="view-a" class="view active" style="padding:0">
+    <div id="view-a" class="view active" style="padding:0;height:100%;display:flex;flex-direction:column">
       <div id="kanban-board">
         <div class="kb-col"><div class="kb-header">未着手 <span class="kb-count" id="cnt-not_started">0</span></div><div class="kb-body" id="kb-not_started" data-prog="not_started" ondragover="onDragOver(event)" ondrop="onDrop(event)" ondragleave="onDragLeave(event)"></div></div>
         <div class="kb-col"><div class="kb-header">仕掛中 <span class="kb-count" id="cnt-in_progress">0</span></div><div class="kb-body" id="kb-in_progress" data-prog="in_progress" ondragover="onDragOver(event)" ondrop="onDrop(event)" ondragleave="onDragLeave(event)"></div></div>
@@ -265,7 +271,7 @@ textarea{resize:vertical;min-height:60px;line-height:1.5}
     </div>
 
     <!-- MATRIX -->
-    <div id="view-b" class="view" style="padding:0">
+    <div id="view-b" class="view" style="padding:0;height:100%">
       <div id="matrix-outer">
         <div id="matrix-x-label" style="display:flex;align-items:center;justify-content:center;gap:6px">← 緊急度 →<button class="mx-info-btn" onclick="showEiModal()" title="アイゼンハワーマトリクスとは">?</button></div>
         <div id="matrix-body">
@@ -620,14 +626,7 @@ function switchView(v){
   /* DOM追加後にスクロールリセット（Chrome scroll anchoring対策） */
   /* ビュー切替時にスクロールを先頭へ（50ms後に確実実行） */
   var ct=document.getElementById('content');
-  if(ct){
-    ct.scrollTop=0;
-    setTimeout(function(){
-      ct.scrollTop=0;
-      var vf=document.getElementById('view-f');
-      if(vf&&vf.classList.contains('active'))vf.scrollIntoView({block:'start',behavior:'instant'});
-    },50);
-  }
+  if(ct){ct.scrollTop=0;window.scrollTo(0,0);}
 }
 
 /* ---- KANBAN ---- */
@@ -1320,7 +1319,6 @@ function impUrgHeatmap(todos){
 var _winSizes={full:{w:'100vw',h:'100vh'},'1280x800':{w:'1280px',h:'800px'},'1440x900':{w:'1440px',h:'900px'},'1920x1080':{w:'1920px',h:'1080px'},'1024x768':{w:'1024px',h:'768px'}};
 function applyWinSize(key,w,h){
   document.documentElement.style.setProperty('--win-w',w);
-  document.documentElement.style.setProperty('--win-h',h);
   localStorage.setItem('tf_winsize',key);
   document.querySelectorAll('.win-opt').forEach(function(el,i){el.classList.toggle('active',el.textContent.trim().startsWith(key==='full'?'フル':key.replace('x',' × ')))});
   // shadow for windowed mode
@@ -1334,7 +1332,6 @@ document.addEventListener('click',function(e){if(!document.getElementById('win-s
   var saved=localStorage.getItem('tf_winsize')||'full';
   var s=_winSizes[saved]||_winSizes.full;
   document.documentElement.style.setProperty('--win-w',s.w);
-  document.documentElement.style.setProperty('--win-h',s.h);
   if(saved!=='full')document.getElementById('app').style.boxShadow='0 0 40px rgba(0,0,0,0.8)';
 })();
 
