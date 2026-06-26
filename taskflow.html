@@ -8,7 +8,7 @@
   <style>
 :root{--bg:#111827;--surface:#1f2937;--surface2:#374151;--surface3:#4b5563;--accent:#6366f1;--accent2:#8b5cf6;--text:#f9fafb;--text2:#d1d5db;--muted:#9ca3af;--border:#374151;--border2:#4b5563;--success:#10b981;--warn:#f59e0b;--danger:#ef4444;--info:#3b82f6;--r:8px;--r2:12px;--shadow:0 4px 24px rgba(0,0,0,.6)}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0f1a;color:var(--text);min-height:100vh;overflow:auto;display:flex;justify-content:center;align-items:flex-start}
 button{cursor:pointer;border:none;border-radius:var(--r);padding:6px 14px;font-size:13px;font-weight:500;transition:opacity .15s}
 button:hover{opacity:.82}
 input,select,textarea{background:var(--surface2);border:1px solid var(--border2);border-radius:var(--r);color:var(--text);font-size:13px;padding:6px 10px;outline:none;width:100%}
@@ -18,13 +18,16 @@ code{background:var(--surface2);padding:1px 5px;border-radius:4px;font-size:12px
 textarea{resize:vertical;min-height:60px;line-height:1.5}
 
 /* ===== APP LAYOUT ===== */
-#app{display:flex;flex-direction:column;height:100vh}
+#app{display:flex;flex-direction:column;width:var(--win-w,100vw);height:var(--win-h,100vh);flex-shrink:0;position:relative;overflow:hidden}
 #header{background:var(--surface);border-bottom:1px solid var(--border);padding:8px 12px;display:flex;align-items:center;gap:8px;flex-shrink:0;flex-wrap:wrap}
 #header h1{font-size:18px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap;flex-shrink:0}
 #nav{display:flex;gap:3px;flex:1;justify-content:center;flex-wrap:wrap}
 .nav-btn{background:transparent;color:var(--muted);border:1px solid transparent;padding:6px 14px;font-size:13px;border-radius:var(--r);min-width:64px;text-align:center}
 .nav-btn.active{background:var(--accent);color:#fff}
 #add-btn{background:var(--accent);color:#fff;padding:6px 14px;flex-shrink:0;white-space:nowrap}
+.win-opt{display:block;width:100%;text-align:left;background:none;color:var(--text2);padding:8px 14px;font-size:13px;border-radius:0;border-bottom:1px solid var(--border)}
+.win-opt:hover{background:var(--surface2)}
+.win-opt.active{color:var(--accent);font-weight:700}
 #content{flex:1;overflow-y:auto;position:relative}
 .view{display:none;padding:14px}
 .view.active{display:block}
@@ -235,6 +238,17 @@ textarea{resize:vertical;min-height:60px;line-height:1.5}
       <button class="nav-btn" onclick="switchView('d')">Google</button>
       <button class="nav-btn" onclick="switchView('e')">設定</button>
       <button class="nav-btn" onclick="switchView('f')">統計</button>
+    </div>
+    <div id="win-size-wrap" style="position:relative;flex-shrink:0">
+      <button id="win-size-btn" onclick="toggleWinMenu()" title="画面サイズ" style="background:var(--surface2);color:var(--muted);border:1px solid var(--border2);padding:6px 10px;font-size:13px">🖥️</button>
+      <div id="win-menu" style="display:none;position:absolute;right:0;top:110%;background:var(--surface);border:1px solid var(--border2);border-radius:var(--r);box-shadow:var(--shadow);min-width:170px;z-index:9999;overflow:hidden">
+        <div style="padding:6px 12px;font-size:11px;color:var(--muted);border-bottom:1px solid var(--border)">画面サイズ</div>
+        <button class="win-opt" onclick="applyWinSize('full','100vw','100vh')">フル（ブラウザに追従）</button>
+        <button class="win-opt" onclick="applyWinSize('1280x800','1280px','800px')">1280 × 800</button>
+        <button class="win-opt" onclick="applyWinSize('1440x900','1440px','900px')">1440 × 900</button>
+        <button class="win-opt" onclick="applyWinSize('1920x1080','1920px','1080px')">1920 × 1080</button>
+        <button class="win-opt" onclick="applyWinSize('1024x768','1024px','768px')">1024 × 768</button>
+      </div>
     </div>
     <button id="add-btn" onclick="openModal()">+ ToDo</button>
   </div>
@@ -1291,6 +1305,28 @@ function impUrgHeatmap(todos){
   }}
   return svg;
 }
+
+/* === WINDOW SIZE === */
+var _winSizes={full:{w:'100vw',h:'100vh'},'1280x800':{w:'1280px',h:'800px'},'1440x900':{w:'1440px',h:'900px'},'1920x1080':{w:'1920px',h:'1080px'},'1024x768':{w:'1024px',h:'768px'}};
+function applyWinSize(key,w,h){
+  document.documentElement.style.setProperty('--win-w',w);
+  document.documentElement.style.setProperty('--win-h',h);
+  localStorage.setItem('tf_winsize',key);
+  document.querySelectorAll('.win-opt').forEach(function(el,i){el.classList.toggle('active',el.textContent.trim().startsWith(key==='full'?'フル':key.replace('x',' × ')))});
+  // shadow for windowed mode
+  document.getElementById('app').style.boxShadow=key==='full'?'':'0 0 40px rgba(0,0,0,0.8)';
+  closeWinMenu();
+}
+function toggleWinMenu(){var m=document.getElementById('win-menu');m.style.display=m.style.display==='none'?'block':'none';}
+function closeWinMenu(){var m=document.getElementById('win-menu');if(m)m.style.display='none';}
+document.addEventListener('click',function(e){if(!document.getElementById('win-size-wrap').contains(e.target))closeWinMenu();});
+(function(){
+  var saved=localStorage.getItem('tf_winsize')||'full';
+  var s=_winSizes[saved]||_winSizes.full;
+  document.documentElement.style.setProperty('--win-w',s.w);
+  document.documentElement.style.setProperty('--win-h',s.h);
+  if(saved!=='full')document.getElementById('app').style.boxShadow='0 0 40px rgba(0,0,0,0.8)';
+})();
 
 function switchStatsTab(tab){
   document.querySelectorAll('.stats-tab').forEach(function(el){el.classList.toggle('active',el.dataset.tab===tab)});
