@@ -615,6 +615,7 @@ function switchView(v){
   document.querySelectorAll('.view').forEach(el=>el.classList.remove('active'));
   document.querySelectorAll('.nav-btn').forEach((el,i)=>el.classList.toggle('active',VIEWS[i]===v));
   document.getElementById('view-'+v).classList.add('active');
+  var ct=document.getElementById('content');if(ct)ct.scrollTop=0;
   S.activeView=v;save();
   if(v==='a')renderKanban();if(v==='b')renderMatrix();if(v==='c')renderList();if(v==='d')renderSync();if(v==='e')renderSettings();if(v==='f')renderStats();
 }
