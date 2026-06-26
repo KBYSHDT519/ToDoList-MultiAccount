@@ -1273,6 +1273,7 @@ function impUrgHeatmap(todos){
 }
 
 function renderStats(){
+  toast('統計ビュー実行中: '+S.todos.length+'件');
   try{
   var todos=S.todos;
   var total=todos.length;
