@@ -26,8 +26,8 @@ textarea{resize:vertical;min-height:60px;line-height:1.5}
 .nav-btn.active{background:var(--accent);color:#fff}
 #add-btn{background:var(--accent);color:#fff;padding:6px 14px;flex-shrink:0;white-space:nowrap}
 #content{flex:1;overflow:hidden;position:relative}
-.view{display:none;height:100%;overflow:auto;padding:14px}
-.view.active{display:block}
+.view{display:none;height:100%;overflow:hidden}
+.view.active{display:flex;flex-direction:column}
 
 /* ===== COMMON CARD ===== */
 .task-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:10px 12px;cursor:pointer;transition:border-color .15s}
@@ -169,7 +169,7 @@ textarea{resize:vertical;min-height:60px;line-height:1.5}
 }
 
 /* ===== STATS VIEW ===== */
-#stats-view{max-width:1100px;margin:0 auto;padding-bottom:24px}
+#stats-view{max-width:1100px;margin:0 auto;padding:14px 14px 24px;flex:1;overflow-y:auto;box-sizing:border-box}
 .stat-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-bottom:18px}
 .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:14px 12px;text-align:center}
 .stat-card-val{font-size:28px;font-weight:800;line-height:1}
@@ -236,7 +236,7 @@ textarea{resize:vertical;min-height:60px;line-height:1.5}
 
   <div id="content">
     <!-- KANBAN -->
-    <div id="view-a" class="view active">
+    <div id="view-a" class="view active" style="padding:0">
       <div id="kanban-board">
         <div class="kb-col"><div class="kb-header">未着手 <span class="kb-count" id="cnt-not_started">0</span></div><div class="kb-body" id="kb-not_started" data-prog="not_started" ondragover="onDragOver(event)" ondrop="onDrop(event)" ondragleave="onDragLeave(event)"></div></div>
         <div class="kb-col"><div class="kb-header">仕掛中 <span class="kb-count" id="cnt-in_progress">0</span></div><div class="kb-body" id="kb-in_progress" data-prog="in_progress" ondragover="onDragOver(event)" ondrop="onDrop(event)" ondragleave="onDragLeave(event)"></div></div>
@@ -246,7 +246,7 @@ textarea{resize:vertical;min-height:60px;line-height:1.5}
     </div>
 
     <!-- MATRIX -->
-    <div id="view-b" class="view">
+    <div id="view-b" class="view" style="padding:0">
       <div id="matrix-outer">
         <div id="matrix-x-label" style="display:flex;align-items:center;justify-content:center;gap:6px">← 緊急度 →<button class="mx-info-btn" onclick="showEiModal()" title="アイゼンハワーマトリクスとは">?</button></div>
         <div id="matrix-body">
@@ -265,7 +265,7 @@ textarea{resize:vertical;min-height:60px;line-height:1.5}
     </div>
 
     <!-- LIST -->
-    <div id="view-c" class="view">
+    <div id="view-c" class="view" style="padding:0">
       <div id="list-controls">
         <input type="text" id="list-search" placeholder="タイトル検索" oninput="renderList()">
         <select id="list-cat" onchange="renderList()"><option value="">全カテゴリ</option></select>
@@ -277,7 +277,7 @@ textarea{resize:vertical;min-height:60px;line-height:1.5}
     </div>
 
     <!-- GOOGLE SYNC -->
-    <div id="view-d" class="view">
+    <div id="view-d" class="view" style="overflow-y:auto;padding:14px">
       <div id="sync-view">
         <div class="sync-section">
           <h3>Google API 設定</h3>
@@ -313,7 +313,7 @@ textarea{resize:vertical;min-height:60px;line-height:1.5}
     </div>
 
     <!-- SETTINGS -->
-    <div id="view-e" class="view">
+    <div id="view-e" class="view" style="overflow-y:auto;padding:14px">
       <div id="settings-view">
         <div class="settings-section">
           <h3>リスト表示</h3>
@@ -1273,7 +1273,6 @@ function impUrgHeatmap(todos){
 }
 
 function renderStats(){
-  toast('統計ビュー実行中: '+S.todos.length+'件');
   try{
   var todos=S.todos;
   var total=todos.length;
