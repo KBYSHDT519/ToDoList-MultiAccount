@@ -29,7 +29,7 @@ textarea{resize:vertical;min-height:60px;line-height:1.5}
 .win-opt:hover{background:var(--surface2)}
 .win-opt.active{color:var(--accent);font-weight:700}
 #content{flex:1;overflow-y:auto;overflow-x:hidden;position:relative}
-.view{display:none;padding:14px}
+.view{display:none}
 .view.active{display:block}
 
 /* ===== COMMON CARD ===== */
@@ -172,12 +172,13 @@ textarea{resize:vertical;min-height:60px;line-height:1.5}
 }
 
 /* ===== STATS VIEW ===== */
-#stats-view{max-width:1100px;margin:0 auto;padding:14px 14px 24px}
-.stats-tabs{display:flex;gap:2px;border-bottom:2px solid var(--border);margin-bottom:16px;position:sticky;top:0;background:var(--bg);z-index:10;padding-top:4px}
+#view-f.active{display:flex;flex-direction:column;height:100%}
+#stats-view{width:100%;max-width:1100px;margin:0 auto;padding:0 14px;display:flex;flex-direction:column;height:100%}
+.stats-tabs{display:flex;gap:2px;border-bottom:2px solid var(--border);padding:12px 0 0;flex-shrink:0}
 .stats-tab{background:none;border:none;border-bottom:3px solid transparent;margin-bottom:-2px;padding:8px 20px;color:var(--muted);cursor:pointer;font-size:13px;font-weight:600;transition:all 0.15s}
 .stats-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
-.stats-pane{display:none}
-.stats-pane.active{display:block}
+.stats-pane{display:none;flex:1;overflow-y:auto;overflow-x:hidden;padding:14px 0}
+.stats-pane.active{display:flex;flex-direction:column}
 .stat-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-bottom:18px}
 .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r2);padding:14px 12px;text-align:center}
 .stat-card-val{font-size:28px;font-weight:800;line-height:1}
