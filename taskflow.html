@@ -54,6 +54,7 @@ textarea{resize:vertical;min-height:60px;line-height:1.5}
 
 /* ===== KANBAN ===== */
 #view-a{padding:0}
+#view-a.active{display:flex;flex-direction:column}
 #kanban-board{display:flex;height:100%;overflow-x:auto;overflow-y:hidden;padding:14px;gap:10px;align-items:stretch}
 .kb-col{background:var(--surface);border-radius:var(--r2);flex:1;min-width:190px;max-width:320px;display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--border);height:100%}
 .kb-header{padding:10px 12px;font-weight:700;font-size:13px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
@@ -261,7 +262,7 @@ textarea{resize:vertical;min-height:60px;line-height:1.5}
 
   <div id="content">
     <!-- KANBAN -->
-    <div id="view-a" class="view active" style="padding:0;height:100%;display:flex;flex-direction:column">
+    <div id="view-a" class="view active" style="padding:0;height:100%">
       <div id="kanban-board">
         <div class="kb-col"><div class="kb-header">未着手 <span class="kb-count" id="cnt-not_started">0</span></div><div class="kb-body" id="kb-not_started" data-prog="not_started" ondragover="onDragOver(event)" ondrop="onDrop(event)" ondragleave="onDragLeave(event)"></div></div>
         <div class="kb-col"><div class="kb-header">仕掛中 <span class="kb-count" id="cnt-in_progress">0</span></div><div class="kb-body" id="kb-in_progress" data-prog="in_progress" ondragover="onDragOver(event)" ondrop="onDrop(event)" ondragleave="onDragLeave(event)"></div></div>
