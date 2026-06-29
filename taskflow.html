@@ -8,7 +8,7 @@
   <style>
 :root{--bg:#111827;--surface:#1f2937;--surface2:#374151;--surface3:#4b5563;--accent:#6366f1;--accent2:#8b5cf6;--text:#f9fafb;--text2:#d1d5db;--muted:#9ca3af;--border:#374151;--border2:#4b5563;--success:#10b981;--warn:#f59e0b;--danger:#ef4444;--info:#3b82f6;--r:8px;--r2:12px;--shadow:0 4px 24px rgba(0,0,0,.6)}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0f1a;color:var(--text);overflow:hidden;height:100vh}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#0a0f1a;color:var(--text);overflow:hidden;position:fixed;width:100%;height:100%}
 button{cursor:pointer;border:none;border-radius:var(--r);padding:6px 14px;font-size:13px;font-weight:500;transition:opacity .15s}
 button:hover{opacity:.82}
 input,select,textarea{background:var(--surface2);border:1px solid var(--border2);border-radius:var(--r);color:var(--text);font-size:13px;padding:6px 10px;outline:none;width:100%}
@@ -18,7 +18,7 @@ code{background:var(--surface2);padding:1px 5px;border-radius:4px;font-size:12px
 textarea{resize:vertical;min-height:60px;line-height:1.5}
 
 /* ===== APP LAYOUT ===== */
-#app{display:flex;flex-direction:column;width:var(--win-w,100vw);height:100vh;margin:0 auto;position:relative}
+#app{display:flex;flex-direction:column;width:var(--win-w,100vw);position:fixed;top:0;left:50%;transform:translateX(-50%);height:100%;margin:0 auto}
 #header{background:var(--surface);border-bottom:1px solid var(--border);padding:8px 12px;display:flex;align-items:center;gap:8px;flex-shrink:0;flex-wrap:wrap}
 #header h1{font-size:18px;font-weight:800;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent;white-space:nowrap;flex-shrink:0}
 #nav{display:flex;gap:3px;flex:1;justify-content:center;flex-wrap:wrap}
@@ -619,7 +619,6 @@ document.addEventListener('click',()=>hideMxPopupNow());
 
 /* ---- VIEW SWITCHING ---- */
 function switchView(v){
-  try{
   // 全ビューをJavaScriptで明示的に非表示
   document.querySelectorAll('.view').forEach(el=>{
     el.classList.remove('active');
@@ -627,22 +626,21 @@ function switchView(v){
   });
   document.querySelectorAll('.nav-btn').forEach((el,i)=>el.classList.toggle('active',VIEWS[i]===v));
   var vEl=document.getElementById('view-'+v);
-  if(!vEl){alert('ERROR: #view-'+v+' not found!');return;}
+  if(!vEl)return;
   vEl.classList.add('active');
   // Kanban/Matrixはflexでないとheightやoverflowが効かない
   if(v==='a')vEl.style.display='flex';
   else if(v==='b')vEl.style.display='flex';
   else vEl.style.display='block';
   S.activeView=v;save();
-  if(v==='f'){alert('view-f display='+vEl.style.display+' calling renderStats...');renderStats();alert('renderStats done');}
-  else if(v==='a')renderKanban();
-  else if(v==='b')renderMatrix();
-  else if(v==='c')renderList();
-  else if(v==='d')renderSync();
-  else if(v==='e')renderSettings();
+  if(v==='a')renderKanban();
+  if(v==='b')renderMatrix();
+  if(v==='c')renderList();
+  if(v==='d')renderSync();
+  if(v==='e')renderSettings();
+  if(v==='f')renderStats();
   var ct=document.getElementById('content');
-  if(ct){ct.scrollTop=0;window.scrollTo(0,0);}
-  }catch(e){alert('switchView ERROR: '+e.message);}
+  if(ct)ct.scrollTop=0;
 }
 
 /* ---- KANBAN ---- */
@@ -1361,14 +1359,7 @@ function switchStatsTab(tab){
 function renderStats(){
   // 概要タブを確実に表示
   switchStatsTab('overview');
-  // デバッグ: view-fの表示状態を確認
-  var _vf=document.getElementById('view-f');
-  var _sv=document.getElementById('stats-view');
-  var _sc=document.getElementById('stat-cards');
-  var _debugMsg='renderStats: vf.display='+(_vf?window.getComputedStyle(_vf).display:'NULL')+
-    ' vf.offsetH='+(_vf?_vf.offsetHeight:0)+
-    ' content.H='+(document.getElementById('content')?document.getElementById('content').offsetHeight:0);
-  alert(_debugMsg);
+
   try{
   var todos=S.todos;
   var total=todos.length;
@@ -1811,6 +1802,12 @@ var _initPane=document.getElementById('stats-pane-overview');
 if(_initPane)_initPane.style.display='block';
 switchView(S.activeView||'a');
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();hideMxPopupNow()}});
+// iOS Safari: bodyスクロール防止
+document.body.addEventListener('touchmove',function(e){
+  var ct=document.getElementById('content');
+  if(ct&&ct.contains(e.target))return; // #content内はスクロール許可
+  e.preventDefault();
+},{passive:false});
 </script>
 </body>
 </html>
