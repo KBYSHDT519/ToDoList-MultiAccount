@@ -619,6 +619,7 @@ document.addEventListener('click',()=>hideMxPopupNow());
 
 /* ---- VIEW SWITCHING ---- */
 function switchView(v){
+  try{
   // 全ビューをJavaScriptで明示的に非表示
   document.querySelectorAll('.view').forEach(el=>{
     el.classList.remove('active');
@@ -626,20 +627,22 @@ function switchView(v){
   });
   document.querySelectorAll('.nav-btn').forEach((el,i)=>el.classList.toggle('active',VIEWS[i]===v));
   var vEl=document.getElementById('view-'+v);
+  if(!vEl){alert('ERROR: #view-'+v+' not found!');return;}
   vEl.classList.add('active');
   // Kanban/Matrixはflexでないとheightやoverflowが効かない
   if(v==='a')vEl.style.display='flex';
   else if(v==='b')vEl.style.display='flex';
   else vEl.style.display='block';
   S.activeView=v;save();
-  if(v==='a')renderKanban();
-  if(v==='b')renderMatrix();
-  if(v==='c')renderList();
-  if(v==='d')renderSync();
-  if(v==='e')renderSettings();
-  if(v==='f')renderStats();
+  if(v==='f'){alert('view-f display='+vEl.style.display+' calling renderStats...');renderStats();alert('renderStats done');}
+  else if(v==='a')renderKanban();
+  else if(v==='b')renderMatrix();
+  else if(v==='c')renderList();
+  else if(v==='d')renderSync();
+  else if(v==='e')renderSettings();
   var ct=document.getElementById('content');
   if(ct){ct.scrollTop=0;window.scrollTo(0,0);}
+  }catch(e){alert('switchView ERROR: '+e.message);}
 }
 
 /* ---- KANBAN ---- */
@@ -1363,11 +1366,9 @@ function renderStats(){
   var _sv=document.getElementById('stats-view');
   var _sc=document.getElementById('stat-cards');
   var _debugMsg='renderStats: vf.display='+(_vf?window.getComputedStyle(_vf).display:'NULL')+
-    ' sv='+(_sv?'OK':'NULL')+' sc='+(_sc?'OK':'NULL')+
-    ' vf.offsetHeight='+(_vf?_vf.offsetHeight:0)+
-    ' content.scrollTop='+(document.getElementById('content')?document.getElementById('content').scrollTop:0);
-  toast(_debugMsg);
-  console.log(_debugMsg);
+    ' vf.offsetH='+(_vf?_vf.offsetHeight:0)+
+    ' content.H='+(document.getElementById('content')?document.getElementById('content').offsetHeight:0);
+  alert(_debugMsg);
   try{
   var todos=S.todos;
   var total=todos.length;
