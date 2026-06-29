@@ -1350,7 +1350,10 @@ document.addEventListener('click',function(e){if(!document.getElementById('win-s
 
 function switchStatsTab(tab){
   document.querySelectorAll('.stats-tab').forEach(function(el){el.classList.toggle('active',el.dataset.tab===tab)});
-  document.querySelectorAll('.stats-pane').forEach(function(el){el.classList.toggle('active',el.id==='stats-pane-'+tab)});
+  document.querySelectorAll('.stats-pane').forEach(function(el){
+    el.classList.toggle('active',el.id==='stats-pane-'+tab);
+    el.style.display=(el.id==='stats-pane-'+tab)?'block':'none';
+  });
 }
 function renderStats(){
   // 概要タブを確実に表示
@@ -1524,8 +1527,10 @@ function renderStats(){
   c7.innerHTML+=urgH;row3.appendChild(c7);
   }catch(e){
     console.error('renderStats ERROR:',e);
+    toast('統計エラー: '+e.message);
     var sv=document.getElementById('stats-view');
     if(sv)sv.innerHTML='<div style="padding:24px;color:#ef4444;font-size:14px"><strong>統計ビュー エラー</strong><br><br>'+e.message+'<br><br><pre style="font-size:11px;color:#9ca3af;white-space:pre-wrap">'+e.stack+'</pre></div>';
+    else{var vf=document.getElementById('view-f');if(vf)vf.insertAdjacentHTML('afterbegin','<div style="padding:24px;color:#ef4444;font-size:14px">統計エラー: '+e.message+'</div>');}
   }
 }
 
@@ -1788,6 +1793,11 @@ async function dupReSync(){
 }
 
 load();
+// 全ビューとstats-paneを初期化（CSS依存を排除）
+document.querySelectorAll('.view').forEach(function(el){el.style.display='none';});
+document.querySelectorAll('.stats-pane').forEach(function(el){el.style.display='none';});
+var _initPane=document.getElementById('stats-pane-overview');
+if(_initPane)_initPane.style.display='block';
 switchView(S.activeView||'a');
 document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();hideMxPopupNow()}});
 </script>
