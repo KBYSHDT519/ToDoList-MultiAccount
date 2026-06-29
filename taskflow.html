@@ -1358,6 +1358,16 @@ function switchStatsTab(tab){
 function renderStats(){
   // 概要タブを確実に表示
   switchStatsTab('overview');
+  // デバッグ: view-fの表示状態を確認
+  var _vf=document.getElementById('view-f');
+  var _sv=document.getElementById('stats-view');
+  var _sc=document.getElementById('stat-cards');
+  var _debugMsg='renderStats: vf.display='+(_vf?window.getComputedStyle(_vf).display:'NULL')+
+    ' sv='+(_sv?'OK':'NULL')+' sc='+(_sc?'OK':'NULL')+
+    ' vf.offsetHeight='+(_vf?_vf.offsetHeight:0)+
+    ' content.scrollTop='+(document.getElementById('content')?document.getElementById('content').scrollTop:0);
+  toast(_debugMsg);
+  console.log(_debugMsg);
   try{
   var todos=S.todos;
   var total=todos.length;
